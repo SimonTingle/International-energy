@@ -30,6 +30,10 @@ export async function scrapeCarbonIntensityData(): Promise<
     const url = "https://api.carbonintensity.org.uk/generation";
     const response = await axios.get<CarbonIntensityResponse>(url, {
       timeout: 30000,
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
     });
 
     if (response.data && response.data.data && response.data.data.generationmix) {
