@@ -4,7 +4,7 @@ import axios from "axios";
 import { CountryData, EnergyResources } from "@/lib/types";
 
 // ISO 3-letter to 2-letter code mapping
-const ISO3_TO_ISO2: Record<string, string> = {
+export const ISO3_TO_ISO2: Record<string, string> = {
   ABW: "AW",
   AFG: "AF",
   AGO: "AO",
