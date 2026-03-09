@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import type { CountryData } from "@/lib/types";
 
@@ -21,12 +22,25 @@ export default function ClientDashboard({
 }: {
   countries: CountryData[];
 }) {
+  useEffect(() => {
+    console.log(
+      "%c🌍 DASHBOARD INITIALIZED",
+      "color: #0ea5e9; font-weight: bold; font-size: 14px"
+    );
+    console.log(`📍 Total countries: ${countries.length}`);
+    console.table({
+      "Map Provider": "OpenStreetMap (Leaflet)",
+      "Data Source": "countries-data.json",
+      "Initialized At": new Date().toLocaleTimeString(),
+      "Browser": navigator.userAgent.split(" ").slice(-2).join(" "),
+    });
+  }, [countries.length]);
   return (
-    <div className="flex-1 flex overflow-hidden">
-      <div className="flex-1">
+    <div className="flex-1 flex relative">
+      <div className="flex-1 overflow-hidden">
         <EnergyMap countries={countries} />
       </div>
-      <div className="absolute right-0 top-0 bottom-0 pointer-events-auto">
+      <div className="absolute right-0 top-0 bottom-0 pointer-events-auto z-50">
         <EnergyPanel />
       </div>
     </div>
