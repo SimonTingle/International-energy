@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     // Verify authorization token for cron job
     const authHeader = request.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET;
+    const cronSecret = process.env.NEXT_PUBLIC_CRON_SECRET;
 
     console.log(`🔒 Environment: ${process.env.NODE_ENV}`);
     console.log(`🔑 Auth header present: ${!!authHeader}`);
