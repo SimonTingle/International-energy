@@ -130,12 +130,19 @@ export async function runScrapers(): Promise<{
 
     // Log merged data summary before insertion
     console.log(`\n📋 MERGED DATA SUMMARY (${mergedData.size} countries):`);
+    let sampleCount = 0;
     for (const [countryCode, resources] of mergedData) {
       const fields = Object.entries(resources)
         .filter(([, v]) => v !== undefined && v !== null && v !== 0)
         .map(([k, v]) => `${k}:${typeof v === "number" ? (v as number).toFixed(1) : v}`)
         .join(" | ");
       console.log(`  ${countryCode}: ${fields || "(empty)"}`);
+
+      // Log sample data with all details
+      if (sampleCount < 5) {
+        console.log(`    📊 Sample data for ${countryCode}:`, JSON.stringify(resources, null, 2));
+        sampleCount++;
+      }
     }
 
     // Insert merged data into database
@@ -147,9 +154,21 @@ export async function runScrapers(): Promise<{
 
     for (const [countryCode, resources] of mergedData) {
       try {
-        await insertEnergyResources(countryCode, resources, "merged-scrape");
-        recordsUpdated++;
-        insertSuccessCount++;
+        const hasData = Object.values(resources).some(v => v !== undefined && v !== null && v !== 0);
+        if (hasData) {
+          await insertEnergyResources(countryCode, resources, "merged-scrape");
+          recordsUpdated++;
+          insertSuccessCount++;
+
+          // Log successful insertions with sample data
+          const fieldCount = Object.keys(resources).length;
+          const nonNullFields = Object.entries(resources)
+            .filter(([, v]) => v !== undefined && v !== null && v !== 0)
+            .length;
+          console.log(`  ✅ Inserted ${countryCode}: ${nonNullFields}/${fieldCount} fields with data`);
+        } else {
+          console.log(`  ⊘ Skipped ${countryCode}: no valid data`);
+        }
       } catch (error) {
         insertFailureCount++;
         const errorMsg = error instanceof Error ? error.message : String(error);
