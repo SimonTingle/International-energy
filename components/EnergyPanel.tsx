@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useDashboardStore } from "@/lib/store";
 import {
   formatNumber,
@@ -10,6 +11,7 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function EnergyPanel() {
+  const [showDebug, setShowDebug] = useState(false);
   const {
     selectedCountry,
     isExpanded,
@@ -101,6 +103,45 @@ export default function EnergyPanel() {
         <div className="text-xs text-slate-500 text-center pt-4 border-t border-slate-700">
           Last updated: {new Date(selectedCountry.lastUpdated).toLocaleDateString()}
         </div>
+
+        {/* Debug Section */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-6 pt-6 border-t border-slate-700">
+            <button
+              onClick={() => setShowDebug(!showDebug)}
+              className="w-full text-xs font-medium text-slate-500 hover:text-slate-300 transition-colors flex items-center justify-between"
+            >
+              <span>🐛 Debug Info</span>
+              <span>{showDebug ? "▼" : "▶"}</span>
+            </button>
+            {showDebug && (
+              <div className="mt-3 space-y-2 text-xs text-slate-400 bg-slate-700 rounded p-3 font-mono">
+                <div>
+                  <span className="text-slate-500">ID:</span> {selectedCountry.id}
+                </div>
+                <div>
+                  <span className="text-slate-500">Lat/Lng:</span> {selectedCountry.coordinates[1].toFixed(4)}, {selectedCountry.coordinates[0].toFixed(4)}
+                </div>
+                <div>
+                  <span className="text-slate-500">Region:</span> {selectedCountry.region}
+                </div>
+                <div>
+                  <span className="text-slate-500">Resources:</span>
+                  <div className="mt-1 ml-2 space-y-1">
+                    {Object.entries(selectedCountry.resources).map(([key, value]) => (
+                      <div key={key}>
+                        {key}: {value}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-slate-500">Expanded:</span> {isExpanded ? "true" : "false"}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Toggle Expand Button */}
