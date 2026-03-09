@@ -22,9 +22,13 @@ export default function ClientDashboard({
   countries: CountryData[];
 }) {
   return (
-    <div className="flex-1 relative overflow-hidden">
-      <EnergyMap countries={countries} />
-      <EnergyPanel />
+    <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1">
+        <EnergyMap countries={countries} />
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 pointer-events-auto">
+        <EnergyPanel />
+      </div>
     </div>
   );
 }

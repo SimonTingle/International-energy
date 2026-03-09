@@ -20,7 +20,7 @@ export default function EnergyPanel() {
 
   if (!selectedCountry) {
     return (
-      <div className="fixed bottom-8 right-8 bg-slate-800 rounded-lg p-6 shadow-2xl border border-slate-700 max-w-xs">
+      <div className="absolute bottom-8 right-8 bg-slate-800 rounded-lg p-6 shadow-2xl border border-slate-700 max-w-xs">
         <p className="text-slate-400 text-sm">
           Hover over a country marker to view energy resources
         </p>
@@ -30,7 +30,7 @@ export default function EnergyPanel() {
 
   return (
     <div
-      className={`fixed bottom-0 right-0 top-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col ${
+      className={`absolute inset-y-0 right-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col ${
         isExpanded ? "w-96" : "w-80"
       }`}
     >
