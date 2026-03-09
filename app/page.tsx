@@ -1,7 +1,13 @@
 import { Suspense } from "react";
-import EnergyMap from "@/components/EnergyMap";
-import EnergyPanel from "@/components/EnergyPanel";
+import dynamic from "next/dynamic";
 import { loadCountriesData } from "@/lib/data-loader";
+
+const EnergyMap = dynamic(() => import("@/components/EnergyMap"), {
+  ssr: false,
+});
+const EnergyPanel = dynamic(() => import("@/components/EnergyPanel"), {
+  ssr: false,
+});
 
 export const revalidate = 3600; // Revalidate every hour
 
