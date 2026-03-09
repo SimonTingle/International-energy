@@ -2,6 +2,6 @@ services:
   - type: web
     name: energy-resources-dashboard
     runtime: node
-    runtimeVersion: 20.11.0
-    buildCommand: npm ci && npm run build
+    runtimeVersion: 20
+    buildCommand: npm ci --legacy-peer-deps --omit=optional && npm run build
     startCommand: npm start
