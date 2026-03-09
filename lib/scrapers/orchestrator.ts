@@ -18,9 +18,18 @@ export async function runScrapers(): Promise<{
   let recordsUpdated = 0;
 
   try {
-    console.log("Starting scraper orchestration...");
+    console.log("\n🔄 ORCHESTRATOR: Starting scraper orchestration");
+    console.log("📋 Running 5 scrapers in parallel:");
+    console.log("  1️⃣  World Bank (energy, GDP, population data)");
+    console.log("  2️⃣  EIA - Energy Information Administration (US energy data)");
+    console.log("  3️⃣  IEA - International Energy Agency (global energy data)");
+    console.log("  4️⃣  Carbon Intensity (emissions data)");
+    console.log("  5️⃣  OWID - Our World in Data (energy statistics)");
+
+    const startTime = performance.now();
 
     // Run all scrapers in parallel
+    console.log("\n⏳ Awaiting all scrapers...");
     const [wbData, eiaData, ieaData, carbonIntensityData, owidData] = await Promise.allSettled([
       scrapeWorldBankData(),
       scrapeEIAData(),
@@ -29,10 +38,16 @@ export async function runScrapers(): Promise<{
       scrapeOWIDEnergyData(),
     ]);
 
+    const scrapersEndTime = performance.now();
+    console.log(
+      `✅ All scrapers completed in ${(scrapersEndTime - startTime).toFixed(2)}ms\n`
+    );
+
     // Merge results from all scrapers
     const mergedData = new Map<string, any>();
 
     // Process World Bank data
+    console.log("📥 Processing World Bank data...");
     if (wbData.status === "fulfilled") {
       wbData.value.forEach((value, key) => {
         if (!mergedData.has(key)) {
@@ -40,14 +55,15 @@ export async function runScrapers(): Promise<{
         }
         Object.assign(mergedData.get(key), value);
       });
-      console.log(`World Bank: ${wbData.value.size} countries processed`);
+      console.log(`  ✅ World Bank: ${wbData.value.size} countries processed`);
     } else {
-      errors.push(
-        `World Bank scraper failed: ${wbData.reason}`
-      );
+      const error = `World Bank scraper failed: ${wbData.reason}`;
+      console.log(`  ❌ ${error}`);
+      errors.push(error);
     }
 
     // Process EIA data
+    console.log("📥 Processing EIA data...");
     if (eiaData.status === "fulfilled") {
       eiaData.value.forEach((value, key) => {
         if (!mergedData.has(key)) {
@@ -55,12 +71,15 @@ export async function runScrapers(): Promise<{
         }
         Object.assign(mergedData.get(key), value);
       });
-      console.log(`EIA: ${eiaData.value.size} countries processed`);
+      console.log(`  ✅ EIA: ${eiaData.value.size} countries processed`);
     } else {
-      errors.push(`EIA scraper failed: ${eiaData.reason}`);
+      const error = `EIA scraper failed: ${eiaData.reason}`;
+      console.log(`  ❌ ${error}`);
+      errors.push(error);
     }
 
     // Process IEA data
+    console.log("📥 Processing IEA data...");
     if (ieaData.status === "fulfilled") {
       ieaData.value.forEach((value, key) => {
         if (!mergedData.has(key)) {
@@ -68,12 +87,15 @@ export async function runScrapers(): Promise<{
         }
         Object.assign(mergedData.get(key), value);
       });
-      console.log(`IEA: ${ieaData.value.size} countries processed`);
+      console.log(`  ✅ IEA: ${ieaData.value.size} countries processed`);
     } else {
-      errors.push(`IEA scraper failed: ${ieaData.reason}`);
+      const error = `IEA scraper failed: ${ieaData.reason}`;
+      console.log(`  ❌ ${error}`);
+      errors.push(error);
     }
 
     // Process Carbon Intensity data
+    console.log("📥 Processing Carbon Intensity data...");
     if (carbonIntensityData.status === "fulfilled") {
       carbonIntensityData.value.forEach((value, key) => {
         if (!mergedData.has(key)) {
@@ -81,12 +103,17 @@ export async function runScrapers(): Promise<{
         }
         Object.assign(mergedData.get(key), value);
       });
-      console.log(`Carbon Intensity: ${carbonIntensityData.value.size} countries processed`);
+      console.log(
+        `  ✅ Carbon Intensity: ${carbonIntensityData.value.size} countries processed`
+      );
     } else {
-      errors.push(`Carbon Intensity scraper failed: ${carbonIntensityData.reason}`);
+      const error = `Carbon Intensity scraper failed: ${carbonIntensityData.reason}`;
+      console.log(`  ❌ ${error}`);
+      errors.push(error);
     }
 
     // Process OWID Energy data
+    console.log("📥 Processing OWID Energy data...");
     if (owidData.status === "fulfilled") {
       owidData.value.forEach((value, key) => {
         if (!mergedData.has(key)) {
@@ -94,27 +121,45 @@ export async function runScrapers(): Promise<{
         }
         Object.assign(mergedData.get(key), value);
       });
-      console.log(`OWID Energy: ${owidData.value.size} countries processed`);
+      console.log(`  ✅ OWID Energy: ${owidData.value.size} countries processed`);
     } else {
-      errors.push(`OWID Energy scraper failed: ${owidData.reason}`);
+      const error = `OWID Energy scraper failed: ${owidData.reason}`;
+      console.log(`  ❌ ${error}`);
+      errors.push(error);
     }
 
     // Insert merged data into database
+    console.log(`\n💾 Inserting merged data into database...`);
+    console.log(`📊 Total countries to update: ${mergedData.size}`);
+
+    let insertSuccessCount = 0;
+    let insertFailureCount = 0;
+
     for (const [countryCode, resources] of mergedData) {
       try {
         await insertEnergyResources(countryCode, resources, "merged-scrape");
         recordsUpdated++;
+        insertSuccessCount++;
       } catch (error) {
-        console.error(
-          `Failed to insert data for ${countryCode}:`,
-          error
-        );
+        insertFailureCount++;
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        console.error(`  ❌ Failed to insert data for ${countryCode}: ${errorMsg}`);
       }
     }
 
     console.log(
-      `Scraper orchestration complete. Updated ${recordsUpdated} records.`
+      `\n✅ Database insertion complete:`
     );
+    console.log(`  ✓ Successful inserts: ${insertSuccessCount}`);
+    console.log(`  ✗ Failed inserts: ${insertFailureCount}`);
+
+    const endTime = performance.now();
+    console.log(
+      `\n🏁 Scraper orchestration complete in ${(endTime - startTime).toFixed(2)}ms`
+    );
+    console.log(`📈 Total records updated: ${recordsUpdated}`);
+    console.log(`❌ Total errors: ${errors.length}\n`);
+
     await logScrapeOperation(
       "orchestrator",
       "success",
@@ -130,7 +175,9 @@ export async function runScrapers(): Promise<{
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-    console.error("Orchestrator error:", errorMessage);
+    console.error("\n❌ ORCHESTRATOR ERROR:", errorMessage);
+    console.error("Error details:", error);
+
     await logScrapeOperation(
       "orchestrator",
       "failed",

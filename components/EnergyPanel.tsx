@@ -29,6 +29,13 @@ export default function EnergyPanel() {
     setIsScraperLoading(true);
     setScraperMessage(null);
     try {
+      console.log(
+        "%c📡 FETCH DATA INITIATED",
+        "color: #0ea5e9; font-weight: bold; font-size: 14px"
+      );
+      console.log(`⏱️  Timestamp: ${new Date().toISOString()}`);
+      console.log(`🌍 Country: ${selectedCountry?.name}`);
+
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
@@ -37,12 +44,18 @@ export default function EnergyPanel() {
       const cronSecret = process.env.NEXT_PUBLIC_CRON_SECRET;
       if (cronSecret) {
         headers["authorization"] = `Bearer ${cronSecret}`;
+        console.log("🔐 Authorization header added");
+      } else {
+        console.log("⚠️  No CRON_SECRET available - proceeding without auth");
       }
 
+      console.log("📤 Sending POST request to /api/scraper/run...");
       const response = await fetch("/api/scraper/run", {
         method: "POST",
         headers,
       });
+
+      console.log(`📊 Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -53,7 +66,20 @@ export default function EnergyPanel() {
         throw new Error(`Failed to run scraper: ${response.status}`);
       }
 
+      console.log("🔍 Parsing response data...");
       const data = await response.json();
+
+      console.log(
+        "%c✅ FETCH DATA SUCCESSFUL",
+        "color: #10b981; font-weight: bold; font-size: 14px"
+      );
+      console.log(`📈 Records updated: ${data.recordsUpdated}`);
+      console.log(`❌ Errors: ${data.errors?.length || 0}`);
+      if (data.errors?.length > 0) {
+        console.log("Error details:", data.errors);
+      }
+      console.log(`⏰ Server timestamp: ${data.timestamp}`);
+
       setScraperMessage({
         type: "success",
         text: `✓ Updated ${data.recordsUpdated} records`,
@@ -63,12 +89,21 @@ export default function EnergyPanel() {
     } catch (error) {
       const errorText =
         error instanceof Error ? error.message : "Unknown error";
+      console.error(
+        "%c❌ FETCH DATA FAILED",
+        "color: #ef4444; font-weight: bold; font-size: 14px"
+      );
+      console.error("Error details:", errorText);
       setScraperMessage({
         type: "error",
         text: `✕ ${errorText}`,
       });
     } finally {
       setIsScraperLoading(false);
+      console.log(
+        "%c🏁 FETCH DATA PROCESS ENDED",
+        "color: #8b5cf6; font-weight: bold; font-size: 14px"
+      );
     }
   };
 
