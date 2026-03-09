@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import EnergyMap from "@/components/EnergyMap";
 import EnergyPanel from "@/components/EnergyPanel";
-import { loadCountriesData } from "@/lib/data";
+import { loadCountriesData } from "@/lib/data-loader";
 
 export const revalidate = 3600; // Revalidate every hour
 
