@@ -3,5 +3,8 @@ services:
     name: energy-resources-dashboard
     runtime: node
     runtimeVersion: 20
-    buildCommand: npm ci --legacy-peer-deps --omit=optional --ignore-scripts && npm run build
+    buildCommand: npm ci --prefer-offline --no-audit --ignore-scripts && npm run build
     startCommand: npm start
+    envVars:
+      - key: npm_config_ignore_scripts
+        value: "true"
