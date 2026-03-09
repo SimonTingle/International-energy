@@ -1,5 +1,4 @@
 import { CountryData } from "./types";
-export { loadCountriesData } from "./data-loader";
 
 export function formatNumber(num: number, decimals: number = 2): string {
   return num.toLocaleString("en-US", {
