@@ -35,9 +35,18 @@ export async function scrapeEIAData(): Promise<Map<string, any>> {
           const series = response.data.series[0];
           const latestData = series.data[0]; // Most recent data point
 
-          // Parse country code from series name if available
-          // This depends on EIA data structure
-          console.log(`EIA ${fuelType} data retrieved:`, latestData);
+          // US is the only country covered by EIA data
+          if (!results.has("US")) {
+            results.set("US", {});
+          }
+
+          const countryData = results.get("US");
+          if (latestData && latestData[0]) {
+            // latestData format: [value, year]
+            countryData[fuelType] = parseFloat(latestData[0]);
+            results.set("US", countryData);
+            console.log(`EIA ${fuelType} data retrieved: ${latestData[0]}`);
+          }
         }
       } catch (error) {
         console.warn(`Failed to fetch EIA ${fuelType} data:`, error);
