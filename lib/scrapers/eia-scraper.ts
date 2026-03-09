@@ -8,16 +8,17 @@ import { logScrapeOperation } from "@/lib/db";
  */
 export async function scrapeEIAData(): Promise<Map<string, any>> {
   const results = new Map<string, any>();
+  const startTime = performance.now();
 
   try {
+    console.log("\n⚡ [EIA] Starting scraper...");
     const apiKey = process.env.EIA_API_KEY;
 
     if (!apiKey) {
-      console.warn("EIA_API_KEY not configured, skipping EIA scraper");
+      console.warn("  ⚠️  [EIA] EIA_API_KEY not configured — skipping");
       return results;
     }
 
-    // EIA API endpoints for different fuel types
     const endpoints = {
       oil: "PET.MCREXUS1.M", // Crude Oil Imports
       gas: "NG.N7411A2.M", // Natural Gas Production
@@ -26,38 +27,45 @@ export async function scrapeEIAData(): Promise<Map<string, any>> {
 
     for (const [fuelType, seriesId] of Object.entries(endpoints)) {
       try {
-        const response = await axios.get(
-          `https://api.eia.gov/series/?api_key=${apiKey}&series_id=${seriesId}`,
-          { timeout: 15000 }
-        );
+        const url = `https://api.eia.gov/series/?api_key=${apiKey}&series_id=${seriesId}`;
+        console.log(`  📡 [EIA] Fetching ${fuelType} → ${seriesId}`);
+
+        const fetchStart = performance.now();
+        const response = await axios.get(url, { timeout: 15000 });
+        const fetchTime = (performance.now() - fetchStart).toFixed(0);
+
+        console.log(`  ⏱️  [EIA] Response ${response.status} in ${fetchTime}ms`);
 
         if (response.data && response.data.series && response.data.series[0]) {
           const series = response.data.series[0];
-          const latestData = series.data[0]; // Most recent data point
+          const latestData = series.data[0];
 
-          // US is the only country covered by EIA data
           if (!results.has("US")) {
             results.set("US", {});
           }
 
           const countryData = results.get("US");
           if (latestData && latestData[0]) {
-            // latestData format: [value, year]
             countryData[fuelType] = parseFloat(latestData[0]);
             results.set("US", countryData);
-            console.log(`EIA ${fuelType} data retrieved: ${latestData[0]}`);
+            console.log(`  📊 [EIA] ${fuelType} = ${latestData[0]} (US)`);
           }
+        } else {
+          console.warn(`  ⚠️  [EIA] No series data returned for ${fuelType}`);
         }
       } catch (error) {
-        console.warn(`Failed to fetch EIA ${fuelType} data:`, error);
+        const msg = error instanceof Error ? error.message : String(error);
+        console.warn(`  ❌ [EIA] Failed to fetch ${fuelType}: ${msg}`);
       }
     }
 
+    const elapsed = (performance.now() - startTime).toFixed(0);
+    console.log(`  ✅ [EIA] Complete: ${results.size} countries in ${elapsed}ms`);
+
     await logScrapeOperation("eia", "success", results.size);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    console.error("EIA scraper error:", errorMessage);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error(`  ❌ [EIA] Scraper error: ${errorMessage}`);
     await logScrapeOperation("eia", "failed", 0, errorMessage);
   }
 

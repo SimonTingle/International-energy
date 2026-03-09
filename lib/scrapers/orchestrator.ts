@@ -128,6 +128,16 @@ export async function runScrapers(): Promise<{
       errors.push(error);
     }
 
+    // Log merged data summary before insertion
+    console.log(`\n📋 MERGED DATA SUMMARY (${mergedData.size} countries):`);
+    for (const [countryCode, resources] of mergedData) {
+      const fields = Object.entries(resources)
+        .filter(([, v]) => v !== undefined && v !== null && v !== 0)
+        .map(([k, v]) => `${k}:${typeof v === "number" ? (v as number).toFixed(1) : v}`)
+        .join(" | ");
+      console.log(`  ${countryCode}: ${fields || "(empty)"}`);
+    }
+
     // Insert merged data into database
     console.log(`\n💾 Inserting merged data into database...`);
     console.log(`📊 Total countries to update: ${mergedData.size}`);
@@ -143,6 +153,10 @@ export async function runScrapers(): Promise<{
       } catch (error) {
         insertFailureCount++;
         const errorMsg = error instanceof Error ? error.message : String(error);
+        if (errorMsg.includes("DATABASE_URL not configured")) {
+          console.warn(`  ⚠️  DB not configured — skipping all inserts`);
+          break;
+        }
         console.error(`  ❌ Failed to insert data for ${countryCode}: ${errorMsg}`);
       }
     }

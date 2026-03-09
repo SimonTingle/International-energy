@@ -17,24 +17,30 @@ interface IEADataPoint {
  */
 export async function scrapeIEAData(): Promise<Map<string, any>> {
   const results = new Map<string, any>();
+  const startTime = performance.now();
 
   try {
-    // IEA Data Services API
+    console.log("\n🌍 [IEA] Starting scraper...");
     const apiKey = process.env.IEA_API_KEY;
 
     if (!apiKey) {
-      console.warn("IEA_API_KEY not configured, skipping IEA scraper");
+      console.warn("  ⚠️  [IEA] IEA_API_KEY not configured — skipping");
       return results;
     }
 
-    // Example: Fetch oil reserves data
     const oilUrl = `https://data.iea.org/api/v1/stocks`;
+    console.log(`  📡 [IEA] Fetching oil reserves → ${oilUrl}`);
+
+    const fetchStart = performance.now();
     const response = await axios.get(oilUrl, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
       },
       timeout: 30000,
     });
+    const fetchTime = (performance.now() - fetchStart).toFixed(0);
+
+    console.log(`  ⏱️  [IEA] Response ${response.status} in ${fetchTime}ms`);
 
     if (response.data && response.data.data) {
       response.data.data.forEach((item: IEADataPoint) => {
@@ -46,13 +52,18 @@ export async function scrapeIEAData(): Promise<Map<string, any>> {
         country.oil = item.value;
         results.set(item.countryCode, country);
       });
+      console.log(`  📊 [IEA] Parsed ${results.size} country records`);
+    } else {
+      console.warn(`  ⚠️  [IEA] No data in response`);
     }
+
+    const elapsed = (performance.now() - startTime).toFixed(0);
+    console.log(`  ✅ [IEA] Complete: ${results.size} countries in ${elapsed}ms`);
 
     await logScrapeOperation("iea", "success", results.size);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    console.error("IEA scraper error:", errorMessage);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error(`  ❌ [IEA] Scraper error: ${errorMessage}`);
     await logScrapeOperation("iea", "failed", 0, errorMessage);
   }
 
