@@ -4,6 +4,7 @@ import { scrapeIEAData } from "./iea-scraper";
 import { scrapeCarbonIntensityData } from "./carbon-intensity-scraper";
 import { scrapeOWIDEnergyData } from "./owid-energy-scraper";
 import { insertEnergyResources, logScrapeOperation } from "@/lib/db";
+import { ISO3_TO_ISO2 } from "@/lib/generators/populate-countries";
 
 /**
  * Scraper Orchestrator
@@ -128,10 +129,34 @@ export async function runScrapers(): Promise<{
       errors.push(error);
     }
 
-    // Log merged data summary before insertion
-    console.log(`\n📋 MERGED DATA SUMMARY (${mergedData.size} countries):`);
-    let sampleCount = 0;
+    // Convert ISO3 country codes to ISO2 before inserting into the database
+    // (DB schema uses VARCHAR(2) country_id referencing the countries table which uses ISO2 codes)
+    const iso2Data = new Map<string, any>();
+    let iso3Converted = 0;
+    let iso3Skipped = 0;
     for (const [countryCode, resources] of mergedData) {
+      if (countryCode.length === 2) {
+        iso2Data.set(countryCode, resources);
+      } else if (countryCode.length === 3) {
+        const iso2 = ISO3_TO_ISO2[countryCode];
+        if (iso2) {
+          if (!iso2Data.has(iso2)) {
+            iso2Data.set(iso2, {});
+          }
+          Object.assign(iso2Data.get(iso2), resources);
+          iso3Converted++;
+        } else {
+          iso3Skipped++;
+          console.warn(`  ⚠️  No ISO2 mapping for ISO3 code: ${countryCode} — skipping`);
+        }
+      }
+    }
+    console.log(`\n🔄 ISO3→ISO2 conversion: ${iso3Converted} converted, ${iso3Skipped} skipped`);
+
+    // Log merged data summary before insertion
+    console.log(`\n📋 MERGED DATA SUMMARY (${iso2Data.size} countries):`);
+    let sampleCount = 0;
+    for (const [countryCode, resources] of iso2Data) {
       const fields = Object.entries(resources)
         .filter(([, v]) => v !== undefined && v !== null && v !== 0)
         .map(([k, v]) => `${k}:${typeof v === "number" ? (v as number).toFixed(1) : v}`)
@@ -147,12 +172,12 @@ export async function runScrapers(): Promise<{
 
     // Insert merged data into database
     console.log(`\n💾 Inserting merged data into database...`);
-    console.log(`📊 Total countries to update: ${mergedData.size}`);
+    console.log(`📊 Total countries to update: ${iso2Data.size}`);
 
     let insertSuccessCount = 0;
     let insertFailureCount = 0;
 
-    for (const [countryCode, resources] of mergedData) {
+    for (const [countryCode, resources] of iso2Data) {
       try {
         const hasData = Object.values(resources).some(v => v !== undefined && v !== null && v !== 0);
         if (hasData) {
