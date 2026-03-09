@@ -2,6 +2,7 @@ import { scrapeWorldBankData } from "./worldbank-scraper";
 import { scrapeEIAData } from "./eia-scraper";
 import { scrapeIEAData } from "./iea-scraper";
 import { scrapeCarbonIntensityData } from "./carbon-intensity-scraper";
+import { scrapeOWIDEnergyData } from "./owid-energy-scraper";
 import { insertEnergyResources, logScrapeOperation } from "@/lib/db";
 
 /**
@@ -20,11 +21,12 @@ export async function runScrapers(): Promise<{
     console.log("Starting scraper orchestration...");
 
     // Run all scrapers in parallel
-    const [wbData, eiaData, ieaData, carbonIntensityData] = await Promise.allSettled([
+    const [wbData, eiaData, ieaData, carbonIntensityData, owidData] = await Promise.allSettled([
       scrapeWorldBankData(),
       scrapeEIAData(),
       scrapeIEAData(),
       scrapeCarbonIntensityData(),
+      scrapeOWIDEnergyData(),
     ]);
 
     // Merge results from all scrapers
@@ -82,6 +84,19 @@ export async function runScrapers(): Promise<{
       console.log(`Carbon Intensity: ${carbonIntensityData.value.size} countries processed`);
     } else {
       errors.push(`Carbon Intensity scraper failed: ${carbonIntensityData.reason}`);
+    }
+
+    // Process OWID Energy data
+    if (owidData.status === "fulfilled") {
+      owidData.value.forEach((value, key) => {
+        if (!mergedData.has(key)) {
+          mergedData.set(key, {});
+        }
+        Object.assign(mergedData.get(key), value);
+      });
+      console.log(`OWID Energy: ${owidData.value.size} countries processed`);
+    } else {
+      errors.push(`OWID Energy scraper failed: ${owidData.reason}`);
     }
 
     // Insert merged data into database
