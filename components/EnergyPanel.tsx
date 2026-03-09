@@ -29,12 +29,27 @@ export default function EnergyPanel() {
     setIsScraperLoading(true);
     setScraperMessage(null);
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      // Add authorization header if CRON_SECRET is available
+      const cronSecret = process.env.NEXT_PUBLIC_CRON_SECRET;
+      if (cronSecret) {
+        headers["authorization"] = `Bearer ${cronSecret}`;
+      }
+
       const response = await fetch("/api/scraper/run", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error(
+            "Unauthorized: Set NEXT_PUBLIC_CRON_SECRET environment variable"
+          );
+        }
         throw new Error(`Failed to run scraper: ${response.status}`);
       }
 
