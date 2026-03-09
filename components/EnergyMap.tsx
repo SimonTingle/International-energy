@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
+import { useEffect, useRef } from "react";
+import L from "leaflet";
 import { CountryData } from "@/lib/types";
 import { useDashboardStore } from "@/lib/store";
 
@@ -11,71 +11,90 @@ interface EnergyMapProps {
 
 export default function EnergyMap({ countries }: EnergyMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  const map = useRef<L.Map | null>(null);
+  const markersRef = useRef<Map<string, L.CircleMarker>>(new Map());
   const { setSelectedCountry, selectedCountry } = useDashboardStore();
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || map.current) return;
 
-    // Initialize map
-    mapboxgl.accessToken =
-      process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
-      "pk.eyJ1IjoiZW5lcmd5LWRhc2giLCJhIjoiY201b2dqNHM2MGl2aTJqcXd1OGh2NTkzaiJ9.test";
+    // Initialize Leaflet map with OpenStreetMap tiles
+    map.current = L.map(mapContainer.current).setView([20, 0], 2);
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/dark-v11",
-      center: [0, 20],
-      zoom: 2,
-      pitch: 0,
-    });
+    // Add OpenStreetMap tiles (free, no key needed)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+      className: "map-tiles",
+    }).addTo(map.current);
 
-    map.current.on("load", () => {
-      setMapLoaded(true);
+    // Create custom icon for markers
+    const createMarker = (country: CountryData) => {
+      const marker = L.circleMarker(
+        [country.coordinates[1], country.coordinates[0]],
+        {
+          radius: 6,
+          fillColor: "#0ea5e9",
+          color: "#0f172a",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.8,
+        }
+      );
 
-      // Add country markers for each country
-      countries.forEach((country) => {
-        const el = document.createElement("div");
-        el.className = "country-marker";
-        el.style.width = "12px";
-        el.style.height = "12px";
-        el.style.borderRadius = "50%";
-        el.style.backgroundColor = "#0ea5e9";
-        el.style.cursor = "pointer";
-        el.style.border = "2px solid #0f172a";
-        el.style.transition = "all 0.2s ease";
-        el.addEventListener("mouseenter", () => {
-          el.style.width = "16px";
-          el.style.height = "16px";
-          el.style.backgroundColor = "#10b981";
-          setSelectedCountry(country);
-        });
-        el.addEventListener("mouseleave", () => {
-          if (selectedCountry?.id !== country.id) {
-            el.style.width = "12px";
-            el.style.height = "12px";
-            el.style.backgroundColor = "#0ea5e9";
-          }
-        });
+      marker.bindPopup(`<div class="text-center">
+        <p class="font-bold">${country.name}</p>
+        <p class="text-xs text-gray-600">${country.region}</p>
+      </div>`);
 
-        new mapboxgl.Marker(el)
-          .setLngLat(country.coordinates)
-          .addTo(map.current!);
+      // Mouse events for hover effect
+      marker.on("mouseenter", () => {
+        marker.setRadius(8);
+        marker.setStyle({ fillColor: "#10b981" });
+        setSelectedCountry(country);
       });
-    });
+
+      marker.on("mouseleave", () => {
+        if (selectedCountry?.id !== country.id) {
+          marker.setRadius(6);
+          marker.setStyle({ fillColor: "#0ea5e9" });
+        }
+      });
+
+      marker.addTo(map.current!);
+      markersRef.current.set(country.id, marker);
+    };
+
+    // Add all country markers
+    countries.forEach(createMarker);
 
     return () => {
       if (map.current) {
         map.current.remove();
+        map.current = null;
       }
     };
   }, [countries, selectedCountry, setSelectedCountry]);
+
+  // Update marker style when country is selected
+  useEffect(() => {
+    markersRef.current.forEach((marker, countryId) => {
+      if (selectedCountry?.id === countryId) {
+        marker.setRadius(8);
+        marker.setStyle({ fillColor: "#10b981" });
+      } else {
+        marker.setRadius(6);
+        marker.setStyle({ fillColor: "#0ea5e9" });
+      }
+    });
+  }, [selectedCountry]);
 
   return (
     <div
       ref={mapContainer}
       className="w-full h-full rounded-lg overflow-hidden shadow-2xl"
+      style={{ background: "#1e293b" }}
     />
   );
 }
