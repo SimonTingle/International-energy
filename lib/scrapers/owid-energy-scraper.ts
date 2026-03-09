@@ -69,7 +69,7 @@ export async function scrapeOWIDEnergyData(): Promise<
       // Keep only the most recent year for each country
       if (!latestYearData.has(code) || latestYearData.get(code)!.year < year) {
         const row: OWIDEnergyRow = { country, code, year };
-        headers.forEach((header, idx) => {
+        headers.forEach((header: string, idx: number) => {
           row[header] = values[idx];
         });
         latestYearData.set(code, row);
