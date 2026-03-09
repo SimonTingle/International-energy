@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { initializeDatabase, insertCountry, insertEnergyResources } from "@/lib/db";
-import { loadCountriesData } from "@/lib/data";
+import { loadCountriesData } from "@/lib/data-loader";
 
 // Initialize database and load sample data
 export async function POST() {
