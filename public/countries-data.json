@@ -1,0 +1,152 @@
+[
+  {
+    "id": "SA",
+    "name": "Saudi Arabia",
+    "coordinates": [45.0792, 23.8859],
+    "region": "Middle East",
+    "resources": {
+      "oil": 266.2,
+      "gas": 324.9,
+      "coal": 0.0,
+      "diesel": 45.3,
+      "renewables": 0.5,
+      "nuclear": 0.0
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "RU",
+    "name": "Russia",
+    "coordinates": [105.3188, 61.5240],
+    "region": "Europe",
+    "resources": {
+      "oil": 80.0,
+      "gas": 1688.0,
+      "coal": 160.3,
+      "diesel": 15.0,
+      "renewables": 5.8,
+      "nuclear": 28.4
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "US",
+    "name": "United States",
+    "coordinates": [-95.7129, 37.0902],
+    "region": "North America",
+    "resources": {
+      "oil": 35.0,
+      "gas": 330.0,
+      "coal": 251.0,
+      "diesel": 28.5,
+      "renewables": 412.0,
+      "nuclear": 95.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CN",
+    "name": "China",
+    "coordinates": [104.1954, 35.8617],
+    "region": "Asia",
+    "resources": {
+      "oil": 25.6,
+      "gas": 192.1,
+      "coal": 1439.5,
+      "diesel": 18.9,
+      "renewables": 1200.0,
+      "nuclear": 55.9
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IN",
+    "name": "India",
+    "coordinates": [78.9629, 20.5937],
+    "region": "Asia",
+    "resources": {
+      "oil": 4.3,
+      "gas": 48.2,
+      "coal": 365.0,
+      "diesel": 3.2,
+      "renewables": 180.5,
+      "nuclear": 7.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BR",
+    "name": "Brazil",
+    "coordinates": [-51.9253, -14.2350],
+    "region": "South America",
+    "resources": {
+      "oil": 12.7,
+      "gas": 42.1,
+      "coal": 7.1,
+      "diesel": 2.8,
+      "renewables": 187.5,
+      "nuclear": 3.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "DE",
+    "name": "Germany",
+    "coordinates": [10.4515, 51.1657],
+    "region": "Europe",
+    "resources": {
+      "oil": 0.3,
+      "gas": 5.3,
+      "coal": 36.0,
+      "diesel": 0.1,
+      "renewables": 280.0,
+      "nuclear": 8.1
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AU",
+    "name": "Australia",
+    "coordinates": [133.7751, -25.2744],
+    "region": "Oceania",
+    "resources": {
+      "oil": 0.4,
+      "gas": 876.5,
+      "coal": 145.0,
+      "diesel": 0.1,
+      "renewables": 65.0,
+      "nuclear": 0.0
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KZ",
+    "name": "Kazakhstan",
+    "coordinates": [66.9237, 48.0196],
+    "region": "Asia",
+    "resources": {
+      "oil": 30.0,
+      "gas": 143.2,
+      "coal": 35.3,
+      "diesel": 5.2,
+      "renewables": 3.5,
+      "nuclear": 2.3
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ZA",
+    "name": "South Africa",
+    "coordinates": [24.6849, -30.5595],
+    "region": "Africa",
+    "resources": {
+      "oil": 0.0,
+      "gas": 1.3,
+      "coal": 30.2,
+      "diesel": 0.0,
+      "renewables": 8.2,
+      "nuclear": 1.9
+    },
+    "lastUpdated": "2026-03-09"
+  }
+]
