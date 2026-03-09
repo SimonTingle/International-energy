@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+.mapboxgl-popup-content {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: #1e293b !important;
+}
+
+.mapboxgl-ctrl-logo {
+  display: none;
+}
+
+.mapboxgl-ctrl-attrib {
+  display: none;
+}
+
+.mapboxgl-canvas-container canvas {
+  outline: none;
+}
