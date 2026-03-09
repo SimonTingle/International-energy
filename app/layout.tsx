@@ -15,8 +15,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link
-          href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css"
           rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         />
       </head>
       <body>{children}</body>
