@@ -36,13 +36,11 @@ export default function ClientDashboard({
     });
   }, [countries.length]);
   return (
-    <div className="flex-1 flex relative">
-      <div className="flex-1 overflow-hidden">
+    <div className="flex-1 relative">
+      <div className="absolute inset-0">
         <EnergyMap countries={countries} />
       </div>
-      <div className="absolute right-0 top-0 bottom-0 pointer-events-auto z-50">
-        <EnergyPanel />
-      </div>
+      <EnergyPanel />
     </div>
   );
 }
