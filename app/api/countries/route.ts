@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { loadCountriesData } from "@/lib/data";
+import { loadCountriesData } from "@/lib/data-loader";
 
 export async function GET() {
   try {
