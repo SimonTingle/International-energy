@@ -8,10 +8,15 @@ import {
   getResourceLabel,
   getResourceUnit,
 } from "@/lib/data";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function EnergyPanel() {
   const [showDebug, setShowDebug] = useState(false);
+  const [isScraperLoading, setIsScraperLoading] = useState(false);
+  const [scraperMessage, setScraperMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const {
     selectedCountry,
     isExpanded,
@@ -19,6 +24,38 @@ export default function EnergyPanel() {
     toggleExpanded,
     reset,
   } = useDashboardStore();
+
+  const handleScrapData = async () => {
+    setIsScraperLoading(true);
+    setScraperMessage(null);
+    try {
+      const response = await fetch("/api/scraper/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to run scraper: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setScraperMessage({
+        type: "success",
+        text: `✓ Updated ${data.recordsUpdated} records`,
+      });
+      // Clear message after 3 seconds
+      setTimeout(() => setScraperMessage(null), 3000);
+    } catch (error) {
+      const errorText =
+        error instanceof Error ? error.message : "Unknown error";
+      setScraperMessage({
+        type: "error",
+        text: `✕ ${errorText}`,
+      });
+    } finally {
+      setIsScraperLoading(false);
+    }
+  };
 
   if (!selectedCountry) {
     return (
@@ -37,21 +74,45 @@ export default function EnergyPanel() {
       }`}
     >
       {/* Header */}
-      <div className="bg-slate-900 p-6 border-b border-slate-700 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">{selectedCountry.name}</h2>
-          <p className="text-slate-400 text-sm">{selectedCountry.region}</p>
+      <div className="bg-slate-900 p-6 border-b border-slate-700 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">{selectedCountry.name}</h2>
+            <p className="text-slate-400 text-sm">{selectedCountry.region}</p>
+          </div>
+          <button
+            onClick={() => {
+              console.log(`❌ CLOSE: Panel closed for ${selectedCountry.name}`);
+              reset();
+            }}
+            className="text-slate-400 hover:text-white transition-colors p-2"
+            aria-label="Close panel"
+          >
+            ✕
+          </button>
         </div>
+        {/* Refresh Data Button */}
         <button
-          onClick={() => {
-            console.log(`❌ CLOSE: Panel closed for ${selectedCountry.name}`);
-            reset();
-          }}
-          className="text-slate-400 hover:text-white transition-colors p-2"
-          aria-label="Close panel"
+          onClick={handleScrapData}
+          disabled={isScraperLoading}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+          aria-label="Refresh data from scrapers"
         >
-          ✕
+          <ArrowPathIcon className={`w-4 h-4 ${isScraperLoading ? "animate-spin" : ""}`} />
+          {isScraperLoading ? "Updating..." : "Refresh Data"}
         </button>
+        {/* Scraper Message */}
+        {scraperMessage && (
+          <div
+            className={`text-sm font-medium py-2 px-3 rounded text-center ${
+              scraperMessage.type === "success"
+                ? "bg-green-900 text-green-100"
+                : "bg-red-900 text-red-100"
+            }`}
+          >
+            {scraperMessage.text}
+          </div>
+        )}
       </div>
 
       {/* Content */}
