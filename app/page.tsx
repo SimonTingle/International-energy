@@ -1,22 +1,14 @@
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
+import ClientDashboard from "@/components/ClientDashboard";
 import { loadCountriesData } from "@/lib/data-loader";
 
-const EnergyMap = dynamic(() => import("@/components/EnergyMap"), {
-  ssr: false,
-});
-const EnergyPanel = dynamic(() => import("@/components/EnergyPanel"), {
-  ssr: false,
-});
-
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 3600;
 
 async function DashboardContent() {
   const countries = await loadCountriesData();
 
   return (
     <div className="w-full h-screen flex flex-col bg-energy-dark">
-      {/* Header */}
       <header className="bg-slate-900 border-b border-slate-700 px-8 py-6 shadow-lg">
         <h1 className="text-3xl font-bold text-white">
           Global Energy Resources Dashboard
@@ -26,13 +18,8 @@ async function DashboardContent() {
         </p>
       </header>
 
-      {/* Map Container */}
-      <div className="flex-1 relative overflow-hidden">
-        <EnergyMap countries={countries} />
-        <EnergyPanel />
-      </div>
+      <ClientDashboard countries={countries} />
 
-      {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-700 px-8 py-4 text-center text-slate-400 text-sm">
         <p>Data updated regularly • Last sync: {new Date().toLocaleString()}</p>
       </footer>
