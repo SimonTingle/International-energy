@@ -22,7 +22,7 @@ export default function EnergyPanel() {
 
   if (!selectedCountry) {
     return (
-      <div className="absolute bottom-8 right-8 bg-slate-800 rounded-lg p-6 shadow-2xl border border-slate-700 max-w-xs">
+      <div className="fixed bottom-20 right-8 bg-slate-800 rounded-lg p-6 shadow-2xl border border-slate-700 max-w-xs z-[9999] pointer-events-auto">
         <p className="text-slate-400 text-sm">
           Hover over a country marker to view energy resources
         </p>
@@ -32,7 +32,7 @@ export default function EnergyPanel() {
 
   return (
     <div
-      className={`absolute inset-y-0 right-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col z-50 ${
+      className={`fixed top-0 right-0 bottom-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col z-[9999] pointer-events-auto ${
         isExpanded ? "w-96" : "w-80"
       }`}
     >
@@ -172,7 +172,7 @@ export default function EnergyPanel() {
 
       {/* Expanded Details Panel */}
       {isExpanded && (
-        <div className="absolute right-full top-0 bottom-0 w-80 bg-slate-900 border-r border-slate-700 p-6 overflow-y-auto z-40">
+        <div className="fixed top-0 bottom-0 w-80 bg-slate-900 border-r border-slate-700 p-6 overflow-y-auto z-[9998]" style={{ right: isExpanded ? '24rem' : '20rem' }}>
           <h3 className="text-lg font-semibold text-white mb-6">
             Detailed Analysis
           </h3>
