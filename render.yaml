@@ -3,7 +3,7 @@ services:
     name: energy-resources-dashboard
     runtime: node
     runtimeVersion: "20"
-    buildCommand: "npm ci --prefer-offline --no-audit --ignore-scripts && npm run build"
+    buildCommand: "./build.sh"
     startCommand: "npm start"
     envVars:
       - key: npm_config_ignore_scripts
