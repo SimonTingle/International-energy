@@ -1,12 +1,22 @@
 import { Pool } from "pg";
 
-// Create a connection pool for PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
-});
+// Check if DATABASE_URL is configured
+const isDatabaseConfigured = !!process.env.DATABASE_URL;
+
+// Create a connection pool for PostgreSQL (only if configured)
+const pool = isDatabaseConfigured
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    })
+  : null;
 
 export async function query(text: string, params?: any[]) {
+  if (!pool) {
+    console.warn("⚠️  DB: DATABASE_URL not configured — skipping query");
+    throw new Error("DATABASE_URL not configured");
+  }
+
   const start = Date.now();
   try {
     const result = await pool.query(text, params);

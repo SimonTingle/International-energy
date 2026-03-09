@@ -23,9 +23,11 @@ interface WorldBankIndicator {
  */
 export async function scrapeWorldBankData(): Promise<Map<string, any>> {
   const results = new Map<string, any>();
+  const startTime = performance.now();
 
   try {
-    // World Bank indicators for renewable energy
+    console.log("\n🏦 [WORLD BANK] Starting scraper...");
+
     const indicators = {
       renewables: "EG.ELC.RNEW.ZS", // Renewable electricity output (% of total)
       cleanEnergy: "EG.ELC.NGAS.ZS", // Natural gas electricity (% of total)
@@ -34,10 +36,17 @@ export async function scrapeWorldBankData(): Promise<Map<string, any>> {
     for (const [type, indicator] of Object.entries(indicators)) {
       try {
         const url = `https://api.worldbank.org/v2/country/all/indicator/${indicator}?format=json&per_page=500`;
+        console.log(`  📡 [WORLD BANK] Fetching ${type} → ${indicator}`);
+        console.log(`  🔗 [WORLD BANK] URL: ${url}`);
 
+        const fetchStart = performance.now();
         const response = await axios.get(url, { timeout: 30000 });
+        const fetchTime = (performance.now() - fetchStart).toFixed(0);
+
+        console.log(`  ⏱️  [WORLD BANK] Response ${response.status} in ${fetchTime}ms`);
 
         if (response.data && response.data[1]) {
+          let countForType = 0;
           response.data[1].forEach((item: WorldBankIndicator) => {
             if (
               item.value &&
@@ -51,27 +60,26 @@ export async function scrapeWorldBankData(): Promise<Map<string, any>> {
               const countryData = results.get(item.countryiso3code);
               countryData[type] = parseFloat(item.value);
               results.set(item.countryiso3code, countryData);
+              countForType++;
             }
           });
+          console.log(`  📊 [WORLD BANK] ${type}: ${countForType} country records parsed`);
+        } else {
+          console.warn(`  ⚠️  [WORLD BANK] No data in response for ${type}`);
         }
       } catch (error) {
-        console.warn(
-          `Failed to fetch World Bank indicator ${indicator}:`,
-          error
-        );
+        const msg = error instanceof Error ? error.message : String(error);
+        console.warn(`  ❌ [WORLD BANK] Failed to fetch ${type} (${indicator}): ${msg}`);
       }
     }
 
-    await logScrapeOperation(
-      "worldbank",
-      "success",
-      results.size,
-      undefined
-    );
+    const elapsed = (performance.now() - startTime).toFixed(0);
+    console.log(`  ✅ [WORLD BANK] Complete: ${results.size} countries in ${elapsed}ms`);
+
+    await logScrapeOperation("worldbank", "success", results.size, undefined);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    console.error("World Bank scraper error:", errorMessage);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error(`  ❌ [WORLD BANK] Scraper error: ${errorMessage}`);
     await logScrapeOperation("worldbank", "failed", 0, errorMessage);
   }
 

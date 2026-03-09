@@ -19,43 +19,50 @@ export async function scrapeOWIDEnergyData(): Promise<
   Map<string, EnergyResources>
 > {
   const results = new Map<string, EnergyResources>();
+  const startTime = performance.now();
 
   try {
-    // Fetch the OWID energy dataset from GitHub
+    console.log("\n📈 [OWID] Starting scraper...");
     const csvUrl =
       "https://raw.githubusercontent.com/owid/energy-data/master/data/owid-energy-data.csv";
+    console.log(`  📡 [OWID] Fetching CSV dataset → ${csvUrl}`);
 
+    const fetchStart = performance.now();
     const response = await axios.get(csvUrl, {
       timeout: 30000,
       headers: {
         Accept: "text/csv",
       },
     });
+    const fetchTime = (performance.now() - fetchStart).toFixed(0);
+
+    console.log(`  ⏱️  [OWID] Response ${response.status} in ${fetchTime}ms`);
 
     if (!response.data) {
-      console.warn("No data returned from OWID API");
+      console.warn("  ⚠️  [OWID] No data returned from OWID");
       await logScrapeOperation("owid-energy", "failed", 0, "No data returned");
       return results;
     }
 
     // Parse CSV data
     const lines = response.data.split("\n");
+    console.log(`  📄 [OWID] CSV size: ${lines.length} rows`);
+
     if (lines.length < 2) {
-      console.warn("Invalid CSV format");
+      console.warn("  ⚠️  [OWID] Invalid CSV format (< 2 rows)");
       await logScrapeOperation("owid-energy", "failed", 0, "Invalid CSV format");
       return results;
     }
 
-    // Parse header row
     const headers = lines[0].split(",").map((h: string) => h.trim());
     const countryIdx = headers.indexOf("country");
     const codeIdx = headers.indexOf("code");
     const yearIdx = headers.indexOf("year");
 
-    // Find relevant columns (using most recent year for each country)
+    console.log(`  🔍 [OWID] Parsing columns: country(${countryIdx}), code(${codeIdx}), year(${yearIdx})`);
+
     const latestYearData = new Map<string, OWIDEnergyRow>();
 
-    // Parse data rows
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue;
 
@@ -66,7 +73,6 @@ export async function scrapeOWIDEnergyData(): Promise<
       const code = values[codeIdx];
       const year = parseInt(values[yearIdx], 10);
 
-      // Keep only the most recent year for each country
       if (!latestYearData.has(code) || latestYearData.get(code)!.year < year) {
         const row: OWIDEnergyRow = { country, code, year };
         headers.forEach((header: string, idx: number) => {
@@ -76,10 +82,11 @@ export async function scrapeOWIDEnergyData(): Promise<
       }
     }
 
-    // Extract energy values from latest year data
+    console.log(`  📊 [OWID] Found latest-year data for ${latestYearData.size} entities`);
+
+    // Extract energy values
     latestYearData.forEach((row) => {
       try {
-        // Use ISO 3-letter country codes
         const countryCode = row.code;
         if (!countryCode || countryCode.length !== 3) return;
 
@@ -87,34 +94,30 @@ export async function scrapeOWIDEnergyData(): Promise<
           oil: parseFloat(row["oil_production"] || row["oil_consumption"] || "0") || 0,
           gas: parseFloat(row["gas_production"] || row["gas_consumption"] || "0") || 0,
           coal: parseFloat(row["coal_production"] || row["coal_consumption"] || "0") || 0,
-          diesel: parseFloat(row["oil_consumption"] || "0") * 0.3 || 0, // Estimate from oil consumption
+          diesel: parseFloat(row["oil_consumption"] || "0") * 0.3 || 0,
           renewables: parseFloat(row["renewables_consumption"] || row["renewables_production"] || "0") || 0,
           nuclear: parseFloat(row["nuclear_consumption"] || row["nuclear_production"] || "0") || 0,
         };
 
-        // Only store if we have at least some data
         if (Object.values(resources).some((v) => v > 0)) {
           results.set(countryCode, resources);
         }
       } catch (error) {
-        // Skip rows with parsing errors
-        console.warn(`Error parsing row for ${row.country}:`, error);
+        console.warn(`  ⚠️  [OWID] Parse error for ${row.country}:`, error);
       }
     });
 
-    console.log(
-      `OWID Energy Scraper: Retrieved data for ${results.size} countries`
-    );
-    await logScrapeOperation(
-      "owid-energy",
-      "success",
-      results.size,
-      undefined
-    );
+    const elapsed = (performance.now() - startTime).toFixed(0);
+    console.log(`  ✅ [OWID] Complete: ${results.size} countries with data in ${elapsed}ms`);
+
+    // Log a sample of countries parsed
+    const sample = Array.from(results.keys()).slice(0, 5);
+    console.log(`  🔎 [OWID] Sample countries: ${sample.join(", ")}...`);
+
+    await logScrapeOperation("owid-energy", "success", results.size, undefined);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    console.error("OWID Energy scraper error:", errorMessage);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error(`  ❌ [OWID] Scraper error: ${errorMessage}`);
     await logScrapeOperation("owid-energy", "failed", 0, errorMessage);
   }
 
