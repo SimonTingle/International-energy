@@ -1,83 +1,425 @@
 [
   {
-    "id": "SA",
-    "name": "Saudi Arabia",
-    "coordinates": [45.0792, 23.8859],
-    "region": "Middle East",
+    "id": "AF",
+    "name": "Afghanistan",
+    "coordinates": [
+      67.71,
+      33.94
+    ],
+    "region": "Asia",
     "resources": {
-      "oil": 266.2,
-      "gas": 324.9,
-      "coal": 0.0,
-      "diesel": 45.3,
-      "renewables": 0.5,
-      "nuclear": 0.0
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
     },
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "RU",
-    "name": "Russia",
-    "coordinates": [105.3188, 61.5240],
+    "id": "AL",
+    "name": "Albania",
+    "coordinates": [
+      20.17,
+      41.15
+    ],
     "region": "Europe",
     "resources": {
-      "oil": 80.0,
-      "gas": 1688.0,
-      "coal": 160.3,
-      "diesel": 15.0,
-      "renewables": 5.8,
-      "nuclear": 28.4
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
     },
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "US",
-    "name": "United States",
-    "coordinates": [-95.7129, 37.0902],
-    "region": "North America",
+    "id": "DZ",
+    "name": "Algeria",
+    "coordinates": [
+      2.63,
+      28.03
+    ],
+    "region": "Africa",
     "resources": {
-      "oil": 35.0,
-      "gas": 330.0,
-      "coal": 251.0,
-      "diesel": 28.5,
-      "renewables": 412.0,
-      "nuclear": 95.5
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
     },
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "CN",
-    "name": "China",
-    "coordinates": [104.1954, 35.8617],
+    "id": "AD",
+    "name": "Andorra",
+    "coordinates": [
+      1.59,
+      42.55
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AO",
+    "name": "Angola",
+    "coordinates": [
+      17.87,
+      -11.2
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AG",
+    "name": "Antigua and Barbuda",
+    "coordinates": [
+      -61.78,
+      17.07
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AR",
+    "name": "Argentina",
+    "coordinates": [
+      -63.62,
+      -38.42
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AM",
+    "name": "Armenia",
+    "coordinates": [
+      44.57,
+      40.07
+    ],
     "region": "Asia",
     "resources": {
-      "oil": 25.6,
-      "gas": 192.1,
-      "coal": 1439.5,
-      "diesel": 18.9,
-      "renewables": 1200.0,
-      "nuclear": 55.9
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
     },
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "IN",
-    "name": "India",
-    "coordinates": [78.9629, 20.5937],
+    "id": "AU",
+    "name": "Australia",
+    "coordinates": [
+      133.7751,
+      -25.2744
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 0.4,
+      "gas": 876.5,
+      "coal": 145,
+      "diesel": 0.1,
+      "renewables": 65,
+      "nuclear": 0
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AT",
+    "name": "Austria",
+    "coordinates": [
+      14.55,
+      47.52
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AZ",
+    "name": "Azerbaijan",
+    "coordinates": [
+      47.58,
+      40.14
+    ],
     "region": "Asia",
     "resources": {
-      "oil": 4.3,
-      "gas": 48.2,
-      "coal": 365.0,
-      "diesel": 3.2,
-      "renewables": 180.5,
-      "nuclear": 7.5
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BS",
+    "name": "Bahamas",
+    "coordinates": [
+      -76.8,
+      25.03
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BH",
+    "name": "Bahrain",
+    "coordinates": [
+      50.56,
+      26.07
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BD",
+    "name": "Bangladesh",
+    "coordinates": [
+      90.36,
+      23.68
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BB",
+    "name": "Barbados",
+    "coordinates": [
+      -59.54,
+      13.19
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BY",
+    "name": "Belarus",
+    "coordinates": [
+      27.95,
+      53.71
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BE",
+    "name": "Belgium",
+    "coordinates": [
+      4.48,
+      50.5
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BZ",
+    "name": "Belize",
+    "coordinates": [
+      -88.75,
+      17.19
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BJ",
+    "name": "Benin",
+    "coordinates": [
+      1.95,
+      9.31
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BT",
+    "name": "Bhutan",
+    "coordinates": [
+      90.43,
+      27.51
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BO",
+    "name": "Bolivia",
+    "coordinates": [
+      -63.59,
+      -16.29
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BA",
+    "name": "Bosnia and Herzegovina",
+    "coordinates": [
+      17.68,
+      43.92
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BW",
+    "name": "Botswana",
+    "coordinates": [
+      22.33,
+      -22.33
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
     },
     "lastUpdated": "2026-03-09"
   },
   {
     "id": "BR",
     "name": "Brazil",
-    "coordinates": [-51.9253, -14.2350],
+    "coordinates": [
+      -51.9253,
+      -14.235
+    ],
     "region": "South America",
     "resources": {
       "oil": 12.7,
@@ -90,42 +432,1113 @@
     "lastUpdated": "2026-03-09"
   },
   {
+    "id": "BN",
+    "name": "Brunei Darussalam",
+    "coordinates": [
+      114.73,
+      4.39
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BG",
+    "name": "Bulgaria",
+    "coordinates": [
+      25.49,
+      42.73
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BF",
+    "name": "Burkina Faso",
+    "coordinates": [
+      -1.56,
+      12.24
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "BI",
+    "name": "Burundi",
+    "coordinates": [
+      29.92,
+      -3.37
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KH",
+    "name": "Cambodia",
+    "coordinates": [
+      104.99,
+      12.57
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CM",
+    "name": "Cameroon",
+    "coordinates": [
+      12.35,
+      3.85
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CA",
+    "name": "Canada",
+    "coordinates": [
+      -95.71,
+      56.13
+    ],
+    "region": "North America",
+    "resources": {
+      "oil": 40,
+      "gas": 200,
+      "coal": 150,
+      "diesel": 20,
+      "renewables": 300,
+      "nuclear": 80
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CV",
+    "name": "Cape Verde",
+    "coordinates": [
+      -23.64,
+      16.73
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CF",
+    "name": "Central African Republic",
+    "coordinates": [
+      21.76,
+      6.61
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TD",
+    "name": "Chad",
+    "coordinates": [
+      19,
+      15.45
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CL",
+    "name": "Chile",
+    "coordinates": [
+      -71.54,
+      -35.68
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CN",
+    "name": "China",
+    "coordinates": [
+      104.1954,
+      35.8617
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 25.6,
+      "gas": 192.1,
+      "coal": 1439.5,
+      "diesel": 18.9,
+      "renewables": 1200,
+      "nuclear": 55.9
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CO",
+    "name": "Colombia",
+    "coordinates": [
+      -74.3,
+      4.57
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KM",
+    "name": "Comoros",
+    "coordinates": [
+      43.33,
+      -11.88
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CG",
+    "name": "Congo",
+    "coordinates": [
+      21.76,
+      -4.04
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CR",
+    "name": "Costa Rica",
+    "coordinates": [
+      -83.75,
+      9.75
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "HR",
+    "name": "Croatia",
+    "coordinates": [
+      15.2,
+      45.1
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CU",
+    "name": "Cuba",
+    "coordinates": [
+      -77.29,
+      21.52
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CY",
+    "name": "Cyprus",
+    "coordinates": [
+      33.43,
+      34.92
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CZ",
+    "name": "Czech Republic",
+    "coordinates": [
+      15.47,
+      49.82
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CD",
+    "name": "Democratic Republic of the Congo",
+    "coordinates": [
+      23.67,
+      -4.04
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "DK",
+    "name": "Denmark",
+    "coordinates": [
+      9.5,
+      56.26
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "DJ",
+    "name": "Djibouti",
+    "coordinates": [
+      42.59,
+      11.86
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "DM",
+    "name": "Dominica",
+    "coordinates": [
+      -61.37,
+      15.42
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "DO",
+    "name": "Dominican Republic",
+    "coordinates": [
+      -70.16,
+      18.74
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "EC",
+    "name": "Ecuador",
+    "coordinates": [
+      -78.18,
+      -1.83
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "EG",
+    "name": "Egypt",
+    "coordinates": [
+      30.8,
+      26.82
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SV",
+    "name": "El Salvador",
+    "coordinates": [
+      -88.9,
+      13.79
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GQ",
+    "name": "Equatorial Guinea",
+    "coordinates": [
+      10.27,
+      1.65
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ER",
+    "name": "Eritrea",
+    "coordinates": [
+      39.15,
+      15.18
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "EE",
+    "name": "Estonia",
+    "coordinates": [
+      25.75,
+      58.6
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ET",
+    "name": "Ethiopia",
+    "coordinates": [
+      40.48,
+      9.15
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "FJ",
+    "name": "Fiji",
+    "coordinates": [
+      177.97,
+      -17.71
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "FI",
+    "name": "Finland",
+    "coordinates": [
+      25.75,
+      61.92
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "FR",
+    "name": "France",
+    "coordinates": [
+      2.21,
+      46.23
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GA",
+    "name": "Gabon",
+    "coordinates": [
+      11.61,
+      -0.8
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GM",
+    "name": "Gambia",
+    "coordinates": [
+      -15.31,
+      13.45
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GE",
+    "name": "Georgia",
+    "coordinates": [
+      43.36,
+      42.32
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
     "id": "DE",
     "name": "Germany",
-    "coordinates": [10.4515, 51.1657],
+    "coordinates": [
+      10.4515,
+      51.1657
+    ],
     "region": "Europe",
     "resources": {
       "oil": 0.3,
       "gas": 5.3,
-      "coal": 36.0,
+      "coal": 36,
       "diesel": 0.1,
-      "renewables": 280.0,
+      "renewables": 280,
       "nuclear": 8.1
     },
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "AU",
-    "name": "Australia",
-    "coordinates": [133.7751, -25.2744],
-    "region": "Oceania",
+    "id": "GH",
+    "name": "Ghana",
+    "coordinates": [
+      -2.04,
+      7.37
+    ],
+    "region": "Africa",
     "resources": {
-      "oil": 0.4,
-      "gas": 876.5,
-      "coal": 145.0,
-      "diesel": 0.1,
-      "renewables": 65.0,
-      "nuclear": 0.0
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GR",
+    "name": "Greece",
+    "coordinates": [
+      21.82,
+      39.07
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GD",
+    "name": "Grenada",
+    "coordinates": [
+      -61.6,
+      12.12
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GT",
+    "name": "Guatemala",
+    "coordinates": [
+      -90.23,
+      15.78
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GN",
+    "name": "Guinea",
+    "coordinates": [
+      -10.27,
+      9.95
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GW",
+    "name": "Guinea-Bissau",
+    "coordinates": [
+      -14.93,
+      11.8
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GY",
+    "name": "Guyana",
+    "coordinates": [
+      -58.98,
+      4.86
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "HT",
+    "name": "Haiti",
+    "coordinates": [
+      -72.29,
+      18.97
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "HN",
+    "name": "Honduras",
+    "coordinates": [
+      -86.24,
+      15.2
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "HU",
+    "name": "Hungary",
+    "coordinates": [
+      19.5,
+      47.16
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IS",
+    "name": "Iceland",
+    "coordinates": [
+      -19.02,
+      64.96
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IN",
+    "name": "India",
+    "coordinates": [
+      78.9629,
+      20.5937
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 4.3,
+      "gas": 48.2,
+      "coal": 365,
+      "diesel": 3.2,
+      "renewables": 180.5,
+      "nuclear": 7.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ID",
+    "name": "Indonesia",
+    "coordinates": [
+      113.92,
+      -2.17
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IR",
+    "name": "Iran",
+    "coordinates": [
+      53.69,
+      32.43
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IQ",
+    "name": "Iraq",
+    "coordinates": [
+      43.68,
+      33.31
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IE",
+    "name": "Ireland",
+    "coordinates": [
+      -8.24,
+      53.41
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IL",
+    "name": "Israel",
+    "coordinates": [
+      34.85,
+      31.05
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "IT",
+    "name": "Italy",
+    "coordinates": [
+      12.57,
+      41.87
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CI",
+    "name": "Ivory Coast",
+    "coordinates": [
+      -5.55,
+      7.54
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "JM",
+    "name": "Jamaica",
+    "coordinates": [
+      -77.3,
+      18.11
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "JP",
+    "name": "Japan",
+    "coordinates": [
+      138.25,
+      36.2
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "JO",
+    "name": "Jordan",
+    "coordinates": [
+      35.93,
+      31.95
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
     },
     "lastUpdated": "2026-03-09"
   },
   {
     "id": "KZ",
     "name": "Kazakhstan",
-    "coordinates": [66.9237, 48.0196],
+    "coordinates": [
+      66.9237,
+      48.0196
+    ],
     "region": "Asia",
     "resources": {
-      "oil": 30.0,
+      "oil": 30,
       "gas": 143.2,
       "coal": 35.3,
       "diesel": 5.2,
@@ -135,17 +1548,1964 @@
     "lastUpdated": "2026-03-09"
   },
   {
-    "id": "ZA",
-    "name": "South Africa",
-    "coordinates": [24.6849, -30.5595],
+    "id": "KE",
+    "name": "Kenya",
+    "coordinates": [
+      37.91,
+      -0.02
+    ],
     "region": "Africa",
     "resources": {
-      "oil": 0.0,
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KI",
+    "name": "Kiribati",
+    "coordinates": [
+      173.04,
+      -0.36
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "XK",
+    "name": "Kosovo",
+    "coordinates": [
+      21.17,
+      42.6
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KP",
+    "name": "North Korea",
+    "coordinates": [
+      127.08,
+      40.34
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KR",
+    "name": "South Korea",
+    "coordinates": [
+      127.77,
+      37.27
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KW",
+    "name": "Kuwait",
+    "coordinates": [
+      47.48,
+      29.31
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KG",
+    "name": "Kyrgyzstan",
+    "coordinates": [
+      74.87,
+      41.71
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LA",
+    "name": "Laos",
+    "coordinates": [
+      102.49,
+      19.86
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LV",
+    "name": "Latvia",
+    "coordinates": [
+      24.94,
+      56.88
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LB",
+    "name": "Lebanon",
+    "coordinates": [
+      35.86,
+      33.85
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LS",
+    "name": "Lesotho",
+    "coordinates": [
+      28.61,
+      -29.61
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LR",
+    "name": "Liberia",
+    "coordinates": [
+      -9.43,
+      6.43
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LY",
+    "name": "Libya",
+    "coordinates": [
+      17.2,
+      26.34
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LI",
+    "name": "Liechtenstein",
+    "coordinates": [
+      9.56,
+      47.27
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LT",
+    "name": "Lithuania",
+    "coordinates": [
+      23.88,
+      55.17
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LU",
+    "name": "Luxembourg",
+    "coordinates": [
+      6.13,
+      49.82
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MG",
+    "name": "Madagascar",
+    "coordinates": [
+      46.86,
+      -18.67
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MW",
+    "name": "Malawi",
+    "coordinates": [
+      34.3,
+      -13.25
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MY",
+    "name": "Malaysia",
+    "coordinates": [
+      101.69,
+      4.21
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MV",
+    "name": "Maldives",
+    "coordinates": [
+      73.51,
+      4.17
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ML",
+    "name": "Mali",
+    "coordinates": [
+      -4,
+      17.57
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MT",
+    "name": "Malta",
+    "coordinates": [
+      14.38,
+      35.94
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MH",
+    "name": "Marshall Islands",
+    "coordinates": [
+      171.18,
+      7.11
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MK",
+    "name": "North Macedonia",
+    "coordinates": [
+      21.71,
+      41.61
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MR",
+    "name": "Mauritania",
+    "coordinates": [
+      -12.27,
+      21.01
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MU",
+    "name": "Mauritius",
+    "coordinates": [
+      57.55,
+      -20.35
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MX",
+    "name": "Mexico",
+    "coordinates": [
+      -102.55,
+      23.63
+    ],
+    "region": "North America",
+    "resources": {
+      "oil": 40,
+      "gas": 200,
+      "coal": 150,
+      "diesel": 20,
+      "renewables": 300,
+      "nuclear": 80
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "FM",
+    "name": "Micronesia",
+    "coordinates": [
+      158.18,
+      7.42
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MD",
+    "name": "Moldova",
+    "coordinates": [
+      28.37,
+      47.41
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MC",
+    "name": "Monaco",
+    "coordinates": [
+      7.41,
+      43.74
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MN",
+    "name": "Mongolia",
+    "coordinates": [
+      103.85,
+      46.86
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ME",
+    "name": "Montenegro",
+    "coordinates": [
+      19.37,
+      42.71
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MA",
+    "name": "Morocco",
+    "coordinates": [
+      -5,
+      31.79
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MZ",
+    "name": "Mozambique",
+    "coordinates": [
+      35.35,
+      -18.67
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "MM",
+    "name": "Myanmar",
+    "coordinates": [
+      95.96,
+      21.91
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NA",
+    "name": "Namibia",
+    "coordinates": [
+      17.08,
+      -22.96
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NR",
+    "name": "Nauru",
+    "coordinates": [
+      166.93,
+      -0.52
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NP",
+    "name": "Nepal",
+    "coordinates": [
+      84.12,
+      28.39
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NL",
+    "name": "Netherlands",
+    "coordinates": [
+      5.29,
+      52.13
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NZ",
+    "name": "New Zealand",
+    "coordinates": [
+      174.89,
+      -40.9
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NI",
+    "name": "Nicaragua",
+    "coordinates": [
+      -85.21,
+      12.87
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NE",
+    "name": "Niger",
+    "coordinates": [
+      2.11,
+      17.61
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NG",
+    "name": "Nigeria",
+    "coordinates": [
+      8.68,
+      9.08
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "NO",
+    "name": "Norway",
+    "coordinates": [
+      8.47,
+      60.47
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "OM",
+    "name": "Oman",
+    "coordinates": [
+      55.92,
+      21.51
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PK",
+    "name": "Pakistan",
+    "coordinates": [
+      69.35,
+      30.84
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PW",
+    "name": "Palau",
+    "coordinates": [
+      134.63,
+      7.31
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PS",
+    "name": "Palestine",
+    "coordinates": [
+      35.2,
+      31.95
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PA",
+    "name": "Panama",
+    "coordinates": [
+      -80.78,
+      8.68
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PG",
+    "name": "Papua New Guinea",
+    "coordinates": [
+      143.96,
+      -6.31
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PY",
+    "name": "Paraguay",
+    "coordinates": [
+      -56.17,
+      -23.44
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PE",
+    "name": "Peru",
+    "coordinates": [
+      -75.73,
+      -9.19
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PH",
+    "name": "Philippines",
+    "coordinates": [
+      121.77,
+      12.88
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PL",
+    "name": "Poland",
+    "coordinates": [
+      19.15,
+      51.92
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "PT",
+    "name": "Portugal",
+    "coordinates": [
+      -8.22,
+      39.4
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "QA",
+    "name": "Qatar",
+    "coordinates": [
+      51.18,
+      25.35
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "RO",
+    "name": "Romania",
+    "coordinates": [
+      24.97,
+      45.94
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "RU",
+    "name": "Russia",
+    "coordinates": [
+      105.3188,
+      61.524
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 80,
+      "gas": 1688,
+      "coal": 160.3,
+      "diesel": 15,
+      "renewables": 5.8,
+      "nuclear": 28.4
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "RW",
+    "name": "Rwanda",
+    "coordinates": [
+      29.87,
+      -1.94
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "KN",
+    "name": "Saint Kitts and Nevis",
+    "coordinates": [
+      -62.65,
+      17.36
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LC",
+    "name": "Saint Lucia",
+    "coordinates": [
+      -60.98,
+      13.91
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "VC",
+    "name": "Saint Vincent and the Grenadines",
+    "coordinates": [
+      -61.19,
+      12.98
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "WS",
+    "name": "Samoa",
+    "coordinates": [
+      -172,
+      -13.76
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SM",
+    "name": "San Marino",
+    "coordinates": [
+      12.46,
+      43.94
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ST",
+    "name": "Sao Tome and Principe",
+    "coordinates": [
+      7.41,
+      0.81
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SA",
+    "name": "Saudi Arabia",
+    "coordinates": [
+      45.0792,
+      23.8859
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 266.2,
+      "gas": 324.9,
+      "coal": 0,
+      "diesel": 45.3,
+      "renewables": 0.5,
+      "nuclear": 0
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SN",
+    "name": "Senegal",
+    "coordinates": [
+      -14.5,
+      14.5
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "RS",
+    "name": "Serbia",
+    "coordinates": [
+      21.01,
+      44.02
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SC",
+    "name": "Seychelles",
+    "coordinates": [
+      55.49,
+      -4.68
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SL",
+    "name": "Sierra Leone",
+    "coordinates": [
+      -11.78,
+      8.46
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SG",
+    "name": "Singapore",
+    "coordinates": [
+      103.82,
+      1.35
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SK",
+    "name": "Slovakia",
+    "coordinates": [
+      19.5,
+      48.67
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SI",
+    "name": "Slovenia",
+    "coordinates": [
+      14.99,
+      46.15
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SB",
+    "name": "Solomon Islands",
+    "coordinates": [
+      160.16,
+      -9.65
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SO",
+    "name": "Somalia",
+    "coordinates": [
+      46.2,
+      5.15
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ZA",
+    "name": "South Africa",
+    "coordinates": [
+      24.6849,
+      -30.5595
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 0,
       "gas": 1.3,
       "coal": 30.2,
-      "diesel": 0.0,
+      "diesel": 0,
       "renewables": 8.2,
       "nuclear": 1.9
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SS",
+    "name": "South Sudan",
+    "coordinates": [
+      31.31,
+      6.88
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ES",
+    "name": "Spain",
+    "coordinates": [
+      -3.74,
+      40.46
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "LK",
+    "name": "Sri Lanka",
+    "coordinates": [
+      80.77,
+      7.87
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SD",
+    "name": "Sudan",
+    "coordinates": [
+      30.8,
+      12.86
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SR",
+    "name": "Suriname",
+    "coordinates": [
+      -56.04,
+      3.92
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SE",
+    "name": "Sweden",
+    "coordinates": [
+      18.64,
+      60.13
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "CH",
+    "name": "Switzerland",
+    "coordinates": [
+      8.23,
+      46.82
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "SY",
+    "name": "Syria",
+    "coordinates": [
+      34.8,
+      34.63
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TW",
+    "name": "Taiwan",
+    "coordinates": [
+      120.96,
+      23.7
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TJ",
+    "name": "Tajikistan",
+    "coordinates": [
+      71.28,
+      38.86
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TZ",
+    "name": "Tanzania",
+    "coordinates": [
+      34.89,
+      -6.37
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TH",
+    "name": "Thailand",
+    "coordinates": [
+      100.99,
+      15.87
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TL",
+    "name": "Timor-Leste",
+    "coordinates": [
+      125.57,
+      -8.87
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TG",
+    "name": "Togo",
+    "coordinates": [
+      0.82,
+      6.12
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TO",
+    "name": "Tonga",
+    "coordinates": [
+      -175.2,
+      -21.18
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TT",
+    "name": "Trinidad and Tobago",
+    "coordinates": [
+      -61.22,
+      10.69
+    ],
+    "region": "Americas",
+    "resources": {
+      "oil": 5,
+      "gas": 30,
+      "coal": 40,
+      "diesel": 2,
+      "renewables": 10,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TN",
+    "name": "Tunisia",
+    "coordinates": [
+      9.54,
+      33.89
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TR",
+    "name": "Turkey",
+    "coordinates": [
+      35.24,
+      38.96
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TM",
+    "name": "Turkmenistan",
+    "coordinates": [
+      64.59,
+      38.97
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "TV",
+    "name": "Tuvalu",
+    "coordinates": [
+      179.2,
+      -7.11
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "UG",
+    "name": "Uganda",
+    "coordinates": [
+      32.29,
+      1.37
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "UA",
+    "name": "Ukraine",
+    "coordinates": [
+      31.17,
+      48.38
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "AE",
+    "name": "United Arab Emirates",
+    "coordinates": [
+      53.85,
+      23.42
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "GB",
+    "name": "United Kingdom",
+    "coordinates": [
+      -3.44,
+      55.38
+    ],
+    "region": "Europe",
+    "resources": {
+      "oil": 5,
+      "gas": 50,
+      "coal": 30,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 20
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "US",
+    "name": "United States",
+    "coordinates": [
+      -95.7129,
+      37.0902
+    ],
+    "region": "North America",
+    "resources": {
+      "oil": 35,
+      "gas": 330,
+      "coal": 251,
+      "diesel": 28.5,
+      "renewables": 412,
+      "nuclear": 95.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "UY",
+    "name": "Uruguay",
+    "coordinates": [
+      -56.17,
+      -32.52
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "UZ",
+    "name": "Uzbekistan",
+    "coordinates": [
+      64.59,
+      41.38
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "VU",
+    "name": "Vanuatu",
+    "coordinates": [
+      166.96,
+      -17.73
+    ],
+    "region": "Oceania",
+    "resources": {
+      "oil": 2,
+      "gas": 20,
+      "coal": 30,
+      "diesel": 1,
+      "renewables": 20,
+      "nuclear": 2
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "VE",
+    "name": "Venezuela",
+    "coordinates": [
+      -66.59,
+      6.42
+    ],
+    "region": "South America",
+    "resources": {
+      "oil": 10,
+      "gas": 30,
+      "coal": 5,
+      "diesel": 2,
+      "renewables": 100,
+      "nuclear": 5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "VN",
+    "name": "Vietnam",
+    "coordinates": [
+      104.99,
+      14.06
+    ],
+    "region": "Asia",
+    "resources": {
+      "oil": 20,
+      "gas": 80,
+      "coal": 200,
+      "diesel": 10,
+      "renewables": 150,
+      "nuclear": 30
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "YE",
+    "name": "Yemen",
+    "coordinates": [
+      48.52,
+      15.55
+    ],
+    "region": "Middle East",
+    "resources": {
+      "oil": 50,
+      "gas": 100,
+      "coal": 5,
+      "diesel": 5,
+      "renewables": 2,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ZM",
+    "name": "Zambia",
+    "coordinates": [
+      27.85,
+      -13.13
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
+    },
+    "lastUpdated": "2026-03-09"
+  },
+  {
+    "id": "ZW",
+    "name": "Zimbabwe",
+    "coordinates": [
+      29.61,
+      -19.02
+    ],
+    "region": "Africa",
+    "resources": {
+      "oil": 10,
+      "gas": 20,
+      "coal": 50,
+      "diesel": 3,
+      "renewables": 5,
+      "nuclear": 0.5
     },
     "lastUpdated": "2026-03-09"
   }
