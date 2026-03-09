@@ -1,13 +1,12 @@
 import { CountryData } from "./types";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export async function loadCountriesData(): Promise<CountryData[]> {
   try {
-    const response = await fetch("/countries-data.json");
-    if (!response.ok) {
-      throw new Error("Failed to load countries data");
-    }
-    const data = await response.json();
-    return data;
+    const filePath = join(process.cwd(), "public", "countries-data.json");
+    const data = readFileSync(filePath, "utf-8");
+    return JSON.parse(data);
   } catch (error) {
     console.error("Error loading countries data:", error);
     return [];
