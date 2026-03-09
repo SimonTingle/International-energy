@@ -72,6 +72,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
       });
 
       marker.on("click", () => {
+        setSelectedCountry(country);
         console.log(`✓ CLICK: ${country.name}`, {
           resources: country.resources,
           total: Object.values(country.resources).reduce((a, b) => a + b, 0),
