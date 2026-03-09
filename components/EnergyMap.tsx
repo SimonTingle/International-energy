@@ -18,6 +18,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
+    console.log("🗺️ MAP: Initializing map with OpenStreetMap tiles");
     // Initialize Leaflet map with OpenStreetMap tiles
     map.current = L.map(mapContainer.current).setView([20, 0], 2);
 
@@ -28,6 +29,8 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
       maxZoom: 19,
       className: "map-tiles",
     }).addTo(map.current);
+
+    console.log(`📍 MARKERS: Loading ${countries.length} countries`);
 
     // Create custom icon for markers
     const createMarker = (country: CountryData) => {
@@ -53,6 +56,11 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
         marker.setRadius(8);
         marker.setStyle({ fillColor: "#10b981" });
         setSelectedCountry(country);
+        console.log(`🔍 HOVER: ${country.name}`, {
+          region: country.region,
+          coordinates: country.coordinates,
+          timestamp: new Date().toISOString(),
+        });
       });
 
       marker.on("mouseleave", () => {
@@ -60,6 +68,15 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
           marker.setRadius(6);
           marker.setStyle({ fillColor: "#0ea5e9" });
         }
+        console.log(`👁️ UNHOVER: ${country.name}`);
+      });
+
+      marker.on("click", () => {
+        console.log(`✓ CLICK: ${country.name}`, {
+          resources: country.resources,
+          total: Object.values(country.resources).reduce((a, b) => a + b, 0),
+          timestamp: new Date().toISOString(),
+        });
       });
 
       marker.addTo(map.current!);

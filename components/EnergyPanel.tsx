@@ -32,7 +32,7 @@ export default function EnergyPanel() {
 
   return (
     <div
-      className={`absolute inset-y-0 right-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col ${
+      className={`absolute inset-y-0 right-0 bg-slate-800 border-l border-slate-700 shadow-2xl transition-all duration-300 flex flex-col z-50 ${
         isExpanded ? "w-96" : "w-80"
       }`}
     >
@@ -43,7 +43,10 @@ export default function EnergyPanel() {
           <p className="text-slate-400 text-sm">{selectedCountry.region}</p>
         </div>
         <button
-          onClick={reset}
+          onClick={() => {
+            console.log(`❌ CLOSE: Panel closed for ${selectedCountry.name}`);
+            reset();
+          }}
           className="text-slate-400 hover:text-white transition-colors p-2"
           aria-label="Close panel"
         >
@@ -147,7 +150,10 @@ export default function EnergyPanel() {
       {/* Toggle Expand Button */}
       <div className="border-t border-slate-700 p-4 bg-slate-900">
         <button
-          onClick={toggleExpanded}
+          onClick={() => {
+            console.log(`${isExpanded ? "⬅️ COLLAPSE" : "➡️ EXPAND"}: Details panel for ${selectedCountry.name}`);
+            toggleExpanded();
+          }}
           className="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
           {isExpanded ? (
@@ -166,7 +172,7 @@ export default function EnergyPanel() {
 
       {/* Expanded Details Panel */}
       {isExpanded && (
-        <div className="absolute right-full top-0 bottom-0 w-80 bg-slate-900 border-r border-slate-700 p-6 overflow-y-auto">
+        <div className="absolute right-full top-0 bottom-0 w-80 bg-slate-900 border-r border-slate-700 p-6 overflow-y-auto z-40">
           <h3 className="text-lg font-semibold text-white mb-6">
             Detailed Analysis
           </h3>
