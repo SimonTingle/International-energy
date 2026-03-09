@@ -1,6 +1,7 @@
 import { scrapeWorldBankData } from "./worldbank-scraper";
 import { scrapeEIAData } from "./eia-scraper";
 import { scrapeIEAData } from "./iea-scraper";
+import { scrapeCarbonIntensityData } from "./carbon-intensity-scraper";
 import { insertEnergyResources, logScrapeOperation } from "@/lib/db";
 
 /**
@@ -19,10 +20,11 @@ export async function runScrapers(): Promise<{
     console.log("Starting scraper orchestration...");
 
     // Run all scrapers in parallel
-    const [wbData, eiaData, ieaData] = await Promise.allSettled([
+    const [wbData, eiaData, ieaData, carbonIntensityData] = await Promise.allSettled([
       scrapeWorldBankData(),
       scrapeEIAData(),
       scrapeIEAData(),
+      scrapeCarbonIntensityData(),
     ]);
 
     // Merge results from all scrapers
@@ -67,6 +69,19 @@ export async function runScrapers(): Promise<{
       console.log(`IEA: ${ieaData.value.size} countries processed`);
     } else {
       errors.push(`IEA scraper failed: ${ieaData.reason}`);
+    }
+
+    // Process Carbon Intensity data
+    if (carbonIntensityData.status === "fulfilled") {
+      carbonIntensityData.value.forEach((value, key) => {
+        if (!mergedData.has(key)) {
+          mergedData.set(key, {});
+        }
+        Object.assign(mergedData.get(key), value);
+      });
+      console.log(`Carbon Intensity: ${carbonIntensityData.value.size} countries processed`);
+    } else {
+      errors.push(`Carbon Intensity scraper failed: ${carbonIntensityData.reason}`);
     }
 
     // Insert merged data into database
