@@ -13,6 +13,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.CircleMarker>>(new Map());
+  const markerColorsRef = useRef<Map<string, string>>(new Map());
   const { setSelectedCountry, selectedCountry } = useDashboardStore();
 
   useEffect(() => {
@@ -32,13 +33,21 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
 
     console.log(`📍 MARKERS: Loading ${countries.length} countries`);
 
-    // Create custom icon for markers
+    // Marker colors: green = live DB data, yellow = fallback/static, red = no data
+    const getMarkerColor = (country: CountryData): string => {
+      const hasData = Object.values(country.resources).some((v) => v > 0);
+      if (!hasData) return "#ef4444"; // red
+      if (country.dataSource === "database") return "#22c55e"; // green
+      return "#eab308"; // yellow (fallback)
+    };
+
     const createMarker = (country: CountryData) => {
+      const fillColor = getMarkerColor(country);
       const marker = L.circleMarker(
         [country.coordinates[1], country.coordinates[0]],
         {
           radius: 6,
-          fillColor: "#0ea5e9",
+          fillColor,
           color: "#0f172a",
           weight: 2,
           opacity: 1,
@@ -59,6 +68,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
         console.log(`🔍 HOVER: ${country.name}`, {
           region: country.region,
           coordinates: country.coordinates,
+          dataSource: country.dataSource,
           timestamp: new Date().toISOString(),
         });
       });
@@ -66,7 +76,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
       marker.on("mouseleave", () => {
         if (selectedCountry?.id !== country.id) {
           marker.setRadius(6);
-          marker.setStyle({ fillColor: "#0ea5e9" });
+          marker.setStyle({ fillColor: markerColorsRef.current.get(country.id) || fillColor });
         }
         console.log(`👁️ UNHOVER: ${country.name}`);
       });
@@ -82,6 +92,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
 
       marker.addTo(map.current!);
       markersRef.current.set(country.id, marker);
+      markerColorsRef.current.set(country.id, fillColor);
     };
 
     // Add all country markers
@@ -103,7 +114,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
         marker.setStyle({ fillColor: "#10b981" });
       } else {
         marker.setRadius(6);
-        marker.setStyle({ fillColor: "#0ea5e9" });
+        marker.setStyle({ fillColor: markerColorsRef.current.get(countryId) || "#eab308" });
       }
     });
   }, [selectedCountry]);

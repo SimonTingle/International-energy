@@ -35,7 +35,9 @@ export async function scrapeWorldBankData(): Promise<Map<string, any>> {
 
     for (const [type, indicator] of Object.entries(indicators)) {
       try {
-        const url = `https://api.worldbank.org/v2/country/all/indicator/${indicator}?format=json&per_page=500`;
+        // mrnev=1 returns only the most recent non-empty value per country
+        // per_page=300 ensures we get all countries in one page
+        const url = `https://api.worldbank.org/v2/country/all/indicator/${indicator}?format=json&per_page=300&mrnev=1`;
         console.log(`  📡 [WORLD BANK] Fetching ${type} → ${indicator}`);
         console.log(`  🔗 [WORLD BANK] URL: ${url}`);
 

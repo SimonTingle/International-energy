@@ -24,7 +24,7 @@ export async function scrapeOWIDEnergyData(): Promise<
   try {
     console.log("\n📈 [OWID] Starting scraper...");
     const csvUrl =
-      "https://raw.githubusercontent.com/owid/energy-data/master/data/owid-energy-data.csv";
+      "https://raw.githubusercontent.com/owid/energy-data/master/owid-energy-data.csv";
     console.log(`  📡 [OWID] Fetching CSV dataset → ${csvUrl}`);
 
     const fetchStart = performance.now();

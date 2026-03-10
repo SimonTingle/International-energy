@@ -14,6 +14,7 @@ export interface CountryData {
   resources: EnergyResources;
   lastUpdated: string;
   region: string;
+  dataSource?: "database" | "fallback"; // where the data came from
 }
 
 export interface CountryStats {
