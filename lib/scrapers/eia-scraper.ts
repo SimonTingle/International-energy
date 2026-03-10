@@ -19,16 +19,17 @@ export async function scrapeEIAData(): Promise<Map<string, any>> {
       return results;
     }
 
+    // EIA APIv2 endpoints (v1 was retired)
     const endpoints = {
-      oil: "PET.MCREXUS1.M", // Crude Oil Imports
-      gas: "NG.N7411A2.M", // Natural Gas Production
-      coal: "COAL.MCOAL.M", // Coal Production
+      oil: { route: "petroleum/crd/crpdn/data/", params: "frequency=monthly&data[0]=value&facets[duoarea][]=NUS&facets[product][]=EPC0&sort[0][column]=period&sort[0][direction]=desc&length=1" },
+      gas: { route: "natural-gas/prod/sum/data/", params: "frequency=monthly&data[0]=value&facets[duoarea][]=NUS&facets[process][]=FGW&sort[0][column]=period&sort[0][direction]=desc&length=1" },
+      coal: { route: "coal/production/data/", params: "frequency=quarterly&data[0]=value&facets[location][]=US&sort[0][column]=period&sort[0][direction]=desc&length=1" },
     };
 
-    for (const [fuelType, seriesId] of Object.entries(endpoints)) {
+    for (const [fuelType, { route, params }] of Object.entries(endpoints)) {
       try {
-        const url = `https://api.eia.gov/series/?api_key=${apiKey}&series_id=${seriesId}`;
-        console.log(`  📡 [EIA] Fetching ${fuelType} → ${seriesId}`);
+        const url = `https://api.eia.gov/v2/${route}?api_key=${apiKey}&${params}`;
+        console.log(`  📡 [EIA] Fetching ${fuelType} (v2 API)`);
 
         const fetchStart = performance.now();
         const response = await axios.get(url, { timeout: 15000 });
@@ -36,22 +37,22 @@ export async function scrapeEIAData(): Promise<Map<string, any>> {
 
         console.log(`  ⏱️  [EIA] Response ${response.status} in ${fetchTime}ms`);
 
-        if (response.data && response.data.series && response.data.series[0]) {
-          const series = response.data.series[0];
-          const latestData = series.data[0];
+        if (response.data?.response?.data?.[0]) {
+          const latestData = response.data.response.data[0];
 
           if (!results.has("US")) {
             results.set("US", {});
           }
 
           const countryData = results.get("US");
-          if (latestData && latestData[0]) {
-            countryData[fuelType] = parseFloat(latestData[0]);
+          const value = parseFloat(latestData.value);
+          if (!isNaN(value)) {
+            countryData[fuelType] = value;
             results.set("US", countryData);
-            console.log(`  📊 [EIA] ${fuelType} = ${latestData[0]} (US)`);
+            console.log(`  📊 [EIA] ${fuelType} = ${value} (US, period: ${latestData.period})`);
           }
         } else {
-          console.warn(`  ⚠️  [EIA] No series data returned for ${fuelType}`);
+          console.warn(`  ⚠️  [EIA] No data returned for ${fuelType}`);
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
@@ -83,16 +84,16 @@ export async function scrapeEIAUSEnergy(): Promise<any> {
       return null;
     }
 
-    // US total energy production
+    // US total energy production (EIA APIv2)
     const response = await axios.get(
-      `https://api.eia.gov/series/?api_key=${apiKey}&series_id=SEDS.TETCB.US.A`,
+      `https://api.eia.gov/v2/seds/data/?api_key=${apiKey}&frequency=annual&data[0]=value&facets[seriesId][]=TETCB&facets[stateId][]=US&sort[0][column]=period&sort[0][direction]=desc&length=5`,
       { timeout: 15000 }
     );
 
-    if (response.data && response.data.series && response.data.series[0]) {
+    if (response.data?.response?.data) {
       return {
         country: "US",
-        data: response.data.series[0].data,
+        data: response.data.response.data,
         lastUpdated: new Date().toISOString(),
       };
     }

@@ -20,21 +20,36 @@ export async function loadCountriesData(): Promise<CountryData[]> {
           }
         );
 
-        return dbData.map((row: any) => ({
-          id: row.country_id,
-          name: row.name,
-          region: row.region,
-          coordinates: row.coordinates.split("(")[1].split(")")[0].split(",").map((v: string) => parseFloat(v)),
-          resources: {
-            oil: row.oil || 0,
-            gas: row.gas || 0,
-            coal: row.coal || 0,
-            diesel: row.diesel || 0,
-            renewables: row.renewables || 0,
-            nuclear: row.nuclear || 0,
-          },
-          lastUpdated: row.timestamp ? new Date(row.timestamp).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-        }));
+        return dbData.map((row: any) => {
+          // Handle PostgreSQL POINT type: pg driver returns {x, y} object
+          // but it may also come as string "(x,y)" depending on driver version
+          let coords: [number, number];
+          if (typeof row.coordinates === 'string') {
+            const parts = row.coordinates.replace(/[()]/g, '').split(',');
+            coords = [parseFloat(parts[0]), parseFloat(parts[1])];
+          } else if (row.coordinates && typeof row.coordinates === 'object') {
+            coords = [row.coordinates.x, row.coordinates.y];
+          } else {
+            coords = [0, 0];
+          }
+
+          return {
+            id: row.country_id,
+            name: row.name,
+            region: row.region,
+            coordinates: coords,
+            dataSource: "database" as const,
+            resources: {
+              oil: parseFloat(row.oil) || 0,
+              gas: parseFloat(row.gas) || 0,
+              coal: parseFloat(row.coal) || 0,
+              diesel: parseFloat(row.diesel) || 0,
+              renewables: parseFloat(row.renewables) || 0,
+              nuclear: parseFloat(row.nuclear) || 0,
+            },
+            lastUpdated: row.timestamp ? new Date(row.timestamp).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          };
+        });
       }
     } catch (error) {
       console.warn(
@@ -53,7 +68,7 @@ export async function loadCountriesData(): Promise<CountryData[]> {
       sources: "OpenStreetMap, World Bank",
       timestamp: new Date().toISOString(),
     });
-    return countries;
+    return countries.map((c: any) => ({ ...c, dataSource: "fallback" }));
   } catch (error) {
     console.error("❌ ERROR: Failed to load countries data:", error);
     return [];
