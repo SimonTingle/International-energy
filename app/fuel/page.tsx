@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * /fuel – Live Fuel Tracker Dashboard
  *
@@ -9,11 +11,8 @@ import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-export const revalidate = 1800; // 30 min ISR
-
 // Load heavy components client-side only (they use fetch + state)
 const CountryTable = dynamic(() => import('@/components/fuel/CountryTable'), {
-  ssr: false,
   loading: () => (
     <div className="bg-slate-900/80 border border-slate-700/50 rounded-2xl p-8 text-center">
       <div className="inline-flex items-center gap-2 text-slate-400">
@@ -25,7 +24,6 @@ const CountryTable = dynamic(() => import('@/components/fuel/CountryTable'), {
 });
 
 const LiveDisruptions = dynamic(() => import('@/components/fuel/LiveDisruptions'), {
-  ssr: false,
   loading: () => (
     <div className="bg-slate-900/80 border border-slate-700/50 rounded-2xl p-8 text-center">
       <div className="inline-flex items-center gap-2 text-slate-400">
@@ -41,7 +39,11 @@ const FuelMetricsUS = dynamic(
     const mod = await import('@/components/fuel/FuelMetricsLoader');
     return mod.default;
   },
-  { ssr: false }
+  {
+    loading: () => (
+      <div className="h-32 bg-slate-900/60 rounded-xl animate-pulse" />
+    ),
+  }
 );
 
 function SourceBadge({ label, url, free }: { label: string; url: string; free?: boolean }) {
@@ -119,9 +121,7 @@ export default function FuelPage() {
           <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
             US Weekly Inventories & Prices
           </h2>
-          <Suspense fallback={<div className="h-32 bg-slate-900/60 rounded-xl animate-pulse" />}>
-            <FuelMetricsUS />
-          </Suspense>
+          <FuelMetricsUS />
         </section>
 
         {/* Two-column layout: disruptions + table */}
