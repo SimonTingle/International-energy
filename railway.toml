@@ -1,0 +1,23 @@
+# Railway.app deployment configuration
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+builder = "nixpacks"
+buildCommand = "npm run build"
+
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# Environment variables are set in Railway dashboard or via railway CLI:
+#   railway variables set EIA_API_KEY=your_key
+#   railway variables set DATABASE_URL=${{Postgres.DATABASE_URL}}
+#   railway variables set CRON_SECRET=your_secret
+#
+# Minimum required for basic functionality (no key):
+#   - OWID, World Bank, MARAD, gCaptain feeds work with zero config
+#   - Add EIA_API_KEY for US + international data (free at eia.gov/opendata)
+#   - Add DATABASE_URL for PostgreSQL (Railway Postgres plugin)
