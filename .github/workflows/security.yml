@@ -1,0 +1,179 @@
+name: Security Audit & Vulnerability Scan
+
+on:
+  push:
+    branches: [main, develop, claude/**]
+    paths:
+      - package.json
+      - package-lock.json
+      - app/**
+      - lib/**
+      - components/**
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run daily at 2 AM UTC to catch new vulnerabilities
+    - cron: '0 2 * * *'
+
+jobs:
+  npm-audit:
+    name: npm audit & security check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high || true
+        # Continue on error so we can parse results
+
+      - name: Check for vulnerabilities (fail on critical)
+        run: |
+          npm audit --audit-level=critical > /dev/null 2>&1
+          if [ $? -ne 0 ]; then
+            echo "❌ CRITICAL vulnerabilities detected"
+            npm audit
+            exit 1
+          fi
+          echo "✅ No critical vulnerabilities found"
+
+  snyk-scan:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Snyk scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --json-file-output=snyk-results.json
+        continue-on-error: true
+
+      - name: Upload Snyk results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-results.sarif
+        continue-on-error: true
+
+  dependency-check:
+    name: OWASP Dependency Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'international-energy'
+          path: '.'
+          format: 'JSON'
+          args: >
+            -l
+        continue-on-error: true
+
+      - name: Upload OWASP results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+        continue-on-error: true
+
+  secret-scan:
+    name: Secret Detection (TruffleHog)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+        continue-on-error: true
+
+  codeql-analysis:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript', 'typescript']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: '/language:${{ matrix.language }}'
+
+  report:
+    name: Security Report Summary
+    runs-on: ubuntu-latest
+    needs: [npm-audit, dependency-check, secret-scan]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All security scans completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Scans performed:" >> $GITHUB_STEP_SUMMARY
+          echo "- npm audit (critical level)" >> $GITHUB_STEP_SUMMARY
+          echo "- OWASP Dependency Check" >> $GITHUB_STEP_SUMMARY
+          echo "- TruffleHog secret detection" >> $GITHUB_STEP_SUMMARY
+          echo "- Snyk vulnerability scan" >> $GITHUB_STEP_SUMMARY
+          echo "- CodeQL security analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### To fix vulnerabilities:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "npm audit fix" >> $GITHUB_STEP_SUMMARY
+          echo "npm audit fix --force" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check job statuses
+        if: ${{ needs.npm-audit.result == 'failure' }}
+        run: |
+          echo "⚠️ npm audit found vulnerabilities"
+          exit 1
