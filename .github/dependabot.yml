@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # npm dependency updates
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      # Check for npm updates twice a week
+      interval: 'weekly'
+      day: 'monday'
+      time: '03:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - 'SimonTingle'
+    labels:
+      - 'dependencies'
+      - 'javascript'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    pull-request-branch-name:
+      separator: '/'
+    rebase-strategy: 'auto'
+    # Group updates by type
+    groups:
+      security:
+        dependency-type: 'production'
+        update-types:
+          - 'patch'
+      minor:
+        dependency-type: 'production'
+        update-types:
+          - 'minor'
+      dev-dependencies:
+        dependency-type: 'development'
+    # Allow certain version updates (e.g., major for critical security fixes)
+    allow:
+      - dependency-type: 'all'
+    # Ignore certain packages if needed
+    ignore:
+      # - dependency-name: 'next'
+      #   versions: ['>=16']
+
+  # GitHub Actions updates
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '04:00'
+    open-pull-requests-limit: 5
+    labels:
+      - 'ci/cd'
+      - 'github-actions'
+    commit-message:
+      prefix: 'ci'
+      include: 'scope'
