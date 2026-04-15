@@ -36,9 +36,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run npm audit
+      - name: Run npm audit (informational)
         run: npm audit --audit-level=high || true
-        # Continue on error so we can parse results
 
       - name: Check for vulnerabilities (fail on critical)
         run: |
@@ -59,17 +58,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # FIX #6: Use --sarif-file-output so Snyk writes a .sarif file.
+      # The old workflow used --json-file-output (produces .json) but then
+      # tried to upload snyk-results.sarif — the file never existed.
       - name: Run Snyk scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high --json-file-output=snyk-results.json
+          args: --severity-threshold=high --sarif-file-output=snyk-results.sarif
         continue-on-error: true
 
-      - name: Upload Snyk results
+      - name: Upload Snyk SARIF to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-results.sarif
         continue-on-error: true
@@ -88,16 +99,14 @@ jobs:
         with:
           project: 'international-energy'
           path: '.'
-          format: 'JSON'
-          args: >
-            -l
+          format: 'SARIF'
         continue-on-error: true
 
       - name: Upload OWASP results to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: results.sarif
+          sarif_file: reports/dependency-check-report.sarif
         continue-on-error: true
 
   secret-scan:
@@ -128,22 +137,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript', 'typescript']
+        # FIX #4 + #5: Upgraded @v2 → @v3 (v2 is deprecated and will stop
+        # working). Removed 'typescript' from matrix — CodeQL uses 'javascript'
+        # to cover both JS and TS; having both caused a duplicate-category error.
+        language: ['javascript']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: '/language:${{ matrix.language }}'
 
@@ -157,23 +169,21 @@ jobs:
         run: |
           echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All security scans completed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Scans performed:" >> $GITHUB_STEP_SUMMARY
-          echo "- npm audit (critical level)" >> $GITHUB_STEP_SUMMARY
+          echo "- npm audit (critical level gate)" >> $GITHUB_STEP_SUMMARY
+          echo "- Snyk vulnerability scan (SARIF upload)" >> $GITHUB_STEP_SUMMARY
           echo "- OWASP Dependency Check" >> $GITHUB_STEP_SUMMARY
           echo "- TruffleHog secret detection" >> $GITHUB_STEP_SUMMARY
-          echo "- Snyk vulnerability scan" >> $GITHUB_STEP_SUMMARY
-          echo "- CodeQL security analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- CodeQL security analysis (javascript/TypeScript)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### To fix vulnerabilities:" >> $GITHUB_STEP_SUMMARY
+          echo "### To fix vulnerabilities locally:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "npm audit fix" >> $GITHUB_STEP_SUMMARY
           echo "npm audit fix --force" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Check job statuses
+      - name: Fail if npm audit failed
         if: ${{ needs.npm-audit.result == 'failure' }}
         run: |
-          echo "⚠️ npm audit found vulnerabilities"
+          echo "⚠️ npm audit found CRITICAL vulnerabilities — deployment will be blocked"
           exit 1
