@@ -436,44 +436,46 @@ export function validateCountries(countries: CountryData[]): {
   };
 }
 
-// Main execution
-(async () => {
-  try {
-    console.log("Populating all 195 countries...");
-    const allCountries = await populateAllCountries();
+// Main execution (only when run as a script, not when imported as a module)
+if (process.argv[1]?.includes("populate-countries")) {
+  (async () => {
+    try {
+      console.log("Populating all 195 countries...");
+      const allCountries = await populateAllCountries();
 
-    console.log(`Total countries: ${allCountries.length}`);
+      console.log(`Total countries: ${allCountries.length}`);
 
-    // Validate
-    const validation = validateCountries(allCountries);
-    console.log("Validation result:", validation);
+      // Validate
+      const validation = validateCountries(allCountries);
+      console.log("Validation result:", validation);
 
-    if (!validation.valid) {
-      console.error("Validation errors:", validation.errors);
+      if (!validation.valid) {
+        console.error("Validation errors:", validation.errors);
+        process.exit(1);
+      }
+
+      // Write to file
+      const outputPath = path.join(process.cwd(), "public", "countries-data.json");
+      fs.writeFileSync(outputPath, JSON.stringify(allCountries, null, 2));
+      console.log(`✓ Successfully wrote ${allCountries.length} countries to ${outputPath}`);
+
+      // Summary statistics
+      const regions = new Map<string, number>();
+      const existingCount = allCountries.filter((c) => c.lastUpdated === "2026-03-09" && allCountries.filter((cc) => cc.id === c.id).length === 1).length;
+
+      allCountries.forEach((c) => {
+        regions.set(c.region, (regions.get(c.region) || 0) + 1);
+      });
+
+      console.log("\nRegional breakdown:");
+      Array.from(regions.entries()).forEach(([region, count]) => {
+        console.log(`  ${region}: ${count} countries`);
+      });
+
+      console.log("\n✓ Population complete!");
+    } catch (error) {
+      console.error("Error during population:", error);
       process.exit(1);
     }
-
-    // Write to file
-    const outputPath = path.join(process.cwd(), "public", "countries-data.json");
-    fs.writeFileSync(outputPath, JSON.stringify(allCountries, null, 2));
-    console.log(`✓ Successfully wrote ${allCountries.length} countries to ${outputPath}`);
-
-    // Summary statistics
-    const regions = new Map<string, number>();
-    const existingCount = allCountries.filter((c) => c.lastUpdated === "2026-03-09" && allCountries.filter((cc) => cc.id === c.id).length === 1).length;
-
-    allCountries.forEach((c) => {
-      regions.set(c.region, (regions.get(c.region) || 0) + 1);
-    });
-
-    console.log("\nRegional breakdown:");
-    Array.from(regions.entries()).forEach(([region, count]) => {
-      console.log(`  ${region}: ${count} countries`);
-    });
-
-    console.log("\n✓ Population complete!");
-  } catch (error) {
-    console.error("Error during population:", error);
-    process.exit(1);
-  }
-})();
+  })();
+}
