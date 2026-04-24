@@ -1,0 +1,31 @@
+name: Daily Fuel Data Scrape
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC to fetch fresh fuel data
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions tab
+
+jobs:
+  scrape:
+    name: Trigger fuel data scraper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger scraper endpoint
+        run: |
+          echo "🔄 Triggering fuel data scraper..."
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.APP_URL }}/api/scraper/run"
+        env:
+          # Set APP_URL and CRON_SECRET in GitHub repo Secrets
+          APP_URL: ${{ secrets.APP_URL }}
+        continue-on-error: true
+
+      - name: Scraper trigger complete
+        run: echo "✅ Fuel data scraper triggered (or skipped if endpoint unavailable)"
