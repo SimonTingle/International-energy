@@ -36,33 +36,17 @@ export default function EnergyPanel() {
       console.log(`⏱️  Timestamp: ${new Date().toISOString()}`);
       console.log(`🌍 Country: ${selectedCountry?.name}`);
 
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-
-      // Add authorization header if CRON_SECRET is available
-      const cronSecret = process.env.NEXT_PUBLIC_CRON_SECRET;
-      if (cronSecret) {
-        headers["authorization"] = `Bearer ${cronSecret}`;
-        console.log("🔐 Authorization header added");
-      } else {
-        console.log("⚠️  No CRON_SECRET available - proceeding without auth");
-      }
-
-      console.log("📤 Sending POST request to /api/scraper/run...");
-      const response = await fetch("/api/scraper/run", {
+      // Use the server-side trigger proxy — CRON_SECRET is added server-side
+      // so it never needs to be exposed to the browser.
+      console.log("📤 Sending POST request to /api/scraper/trigger...");
+      const response = await fetch("/api/scraper/trigger", {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
       });
 
       console.log(`📊 Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error(
-            "Unauthorized: Set NEXT_PUBLIC_CRON_SECRET environment variable"
-          );
-        }
         throw new Error(`Failed to run scraper: ${response.status}`);
       }
 
