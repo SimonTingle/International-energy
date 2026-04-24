@@ -5,29 +5,44 @@ import { runScrapers } from "@/lib/scrapers/orchestrator";
  * API endpoint to trigger data scrapers
  * Can be called manually or via cron job
  * Protected by authorization header in production
+ * All requests logged with IP, User-Agent, and auth status
  */
+
+function getClientIP(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  const realIP = request.headers.get("x-real-ip");
+  return forwardedFor?.split(",")[0].trim() || realIP || "unknown";
+}
+
 export async function POST(request: NextRequest) {
   try {
-    console.log("\n📡 API ENDPOINT: /api/scraper/run");
-    console.log(`⏱️  Timestamp: ${new Date().toISOString()}`);
-
-    // Verify authorization token for cron job
+    const clientIP = getClientIP(request);
+    const userAgent = request.headers.get("user-agent") || "unknown";
+    const timestamp = new Date().toISOString();
     const authHeader = request.headers.get("authorization");
     const cronSecret = process.env.NEXT_PUBLIC_CRON_SECRET;
 
+    console.log("\n📡 API ENDPOINT: /api/scraper/run");
+    console.log(`⏱️  Timestamp: ${timestamp}`);
+    console.log(`🌐 Client IP: ${clientIP}`);
+    console.log(`📱 User-Agent: ${userAgent}`);
     console.log(`🔒 Environment: ${process.env.NODE_ENV}`);
     console.log(`🔑 Auth header present: ${!!authHeader}`);
 
     if (process.env.NODE_ENV === "production") {
       console.log("🔐 Production mode - verifying authorization...");
       if (!authHeader || !cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-        console.log("❌ Authorization failed");
+        console.warn(`⚠️  UNAUTHORIZED ACCESS ATTEMPT`);
+        console.warn(`   IP: ${clientIP}`);
+        console.warn(`   User-Agent: ${userAgent}`);
+        console.warn(`   Timestamp: ${timestamp}`);
+        console.warn(`   Auth header provided: ${!!authHeader}`);
         return NextResponse.json(
           { error: "Unauthorized" },
           { status: 401 }
         );
       }
-      console.log("✅ Authorization successful");
+      console.log(`✅ Authorization successful from ${clientIP}`);
     } else {
       console.log("ℹ️  Development mode - skipping authorization check");
     }
@@ -71,11 +86,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET endpoint for cron job verification
+// GET endpoint for cron job verification (also logged)
 export async function GET(request: NextRequest) {
+  const clientIP = getClientIP(request);
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  const timestamp = new Date().toISOString();
+
+  console.log("\n📡 API ENDPOINT: /api/scraper/run (GET health check)");
+  console.log(`⏱️  Timestamp: ${timestamp}`);
+  console.log(`🌐 Client IP: ${clientIP}`);
+  console.log(`📱 User-Agent: ${userAgent}`);
+
   return NextResponse.json({
     status: "ok",
     message: "Scraper endpoint is ready. Use POST to trigger scrapers.",
-    timestamp: new Date().toISOString(),
+    timestamp,
   });
 }
