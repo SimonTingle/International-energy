@@ -44,14 +44,23 @@ jobs:
 
       # FIX #7: `npm audit fix` does not accept --audit-level — that flag is
       # only valid for `npm audit`. The old command failed silently every time.
-      - name: Auto-fix vulnerabilities (non-breaking only)
+      - name: Auto-fix vulnerabilities (with fallback)
         if: steps.check.outputs.has_vulns == 'true'
         run: |
           echo "🔧 Found vulnerabilities, attempting safe auto-fix..."
-          # Only fix non-breaking vulnerabilities (no --force)
-          # This avoids breaking changes like Next.js major version bumps
-          npm audit fix || true
-          echo "✅ Auto-fix completed (breaking updates skipped)"
+
+          # Try conservative fix first (no --force)
+          if npm audit fix; then
+            echo "✅ Auto-fix completed safely (non-breaking patches only)"
+          else
+            echo "⚠️  Conservative fix failed, attempting aggressive fix..."
+            # Fallback: try with --force for breaking changes if needed
+            if npm audit fix --force; then
+              echo "✅ Auto-fix completed with --force (breaking changes allowed)"
+            else
+              echo "⚠️  Both fix attempts failed, continuing with best-effort patches"
+            fi
+          fi
 
       - name: Check if package-lock.json changed
         id: changes
