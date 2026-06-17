@@ -1,19 +1,16 @@
 /**
- * Maritime disruption data – NO Twitter/X API required
+ * Maritime disruption data
  *
- * Free sources used (in fallback order):
- *  1. Nitter RSS  – public Nitter instances mirror @WindwardAI tweets as RSS
- *  2. MARAD       – US Maritime Administration official advisories (XML/HTML)
- *  3. gCaptain    – Authoritative maritime news RSS feed (completely free)
+ * Sources in fallback order:
+ *  0. AISStream (primary)  – real-time AIS vessel data, requires AISSTREAM_API_KEY
+ *  1. Nitter RSS           – public Nitter instances mirror @WindwardAI tweets as RSS
+ *  2. MARAD               – US Maritime Administration official advisories (XML/HTML)
+ *  3. gCaptain            – Authoritative maritime news RSS feed (completely free)
  *  4. MarineTraffic blog RSS
  *  5. Lloyd's List RSS (public entries)
- *
- * Nitter explanation:
- *   Nitter is an open-source, privacy-friendly Twitter frontend.
- *   Public instances expose /username/rss without any API key.
- *   We try several instances in order and stop at the first success.
- *   This covers @WindwardAI, @MarineTraffic, @Portwatch_IMF etc.
  */
+
+import WS from 'ws';
 
 export interface DisruptionPost {
   title: string;
@@ -24,15 +21,171 @@ export interface DisruptionPost {
   tags: string[];
 }
 
+// --- Source 0: AISStream real-time AIS data ----------------------------------
+
+const AISSTREAM_WS = 'wss://stream.aisstream.io/v0/stream';
+
+// Bounding boxes [MinLat, MinLon, MaxLat, MaxLon] for key energy shipping lanes
+const ENERGY_BOXES: [[number, number], [number, number]][] = [
+  [[21.0, 55.0], [27.0, 61.0]],   // Persian Gulf & Strait of Hormuz
+  [[11.0, 32.0], [30.0, 43.5]],   // Red Sea & Bab-el-Mandeb
+  [[29.0, 32.0], [32.0, 33.5]],   // Suez Canal
+  [[1.0,  99.0], [6.0,  104.5]],  // Strait of Malacca
+];
+
+const NAV_STATUS_LABEL: Record<number, string> = {
+  1: 'At Anchor',
+  2: 'Not Under Command',
+  3: 'Restricted Manoeuvrability',
+  4: 'Constrained by Draught',
+  6: 'Aground',
+};
+
+// Only report these statuses as potential disruptions
+const DISRUPTION_STATUSES = new Set([1, 2, 3, 4, 6]);
+
+interface AISVessel {
+  mmsi: number;
+  name: string;
+  lat: number;
+  lon: number;
+  navStatus: number;
+  sog: number;
+  time: string;
+}
+
+function regionLabel(lat: number, lon: number): string {
+  if (lat >= 25.5 && lat <= 26.7 && lon >= 56.0 && lon <= 57.5) return 'Strait of Hormuz';
+  if (lat >= 21.0 && lat <= 27.0 && lon >= 55.0 && lon <= 61.0) return 'Persian Gulf';
+  if (lat >= 11.5 && lat <= 13.5 && lon >= 42.5 && lon <= 44.5) return 'Bab-el-Mandeb';
+  if (lat >= 29.0 && lat <= 32.0 && lon >= 32.0 && lon <= 33.5) return 'Suez Canal';
+  if (lat >= 11.0 && lat <= 30.0 && lon >= 32.0 && lon <= 43.5) return 'Red Sea';
+  if (lat >= 1.0  && lat <= 6.0  && lon >= 99.0 && lon <= 104.5) return 'Strait of Malacca';
+  return 'Unknown Region';
+}
+
+function parseAISTime(timeUtc: string): string {
+  // AISStream time_utc: "2024-01-01 12:00:00.000000000 +0000 UTC"
+  try {
+    return new Date(timeUtc.replace(' +0000 UTC', 'Z').replace(' ', 'T')).toISOString();
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
+function vesselsToDisruptions(vessels: AISVessel[]): DisruptionPost[] {
+  const posts: DisruptionPost[] = [];
+
+  // Critical single-vessel events: aground or not under command
+  const critical = vessels.filter(v => v.navStatus === 2 || v.navStatus === 6);
+  for (const v of critical) {
+    const region = regionLabel(v.lat, v.lon);
+    const statusLabel = NAV_STATUS_LABEL[v.navStatus];
+    const name = v.name || `MMSI ${v.mmsi}`;
+    const tags = ['Disruption', region];
+    if (v.navStatus === 6) tags.push('Aground');
+    posts.push({
+      title: `🚨 ${name} — ${statusLabel} in ${region}`,
+      summary: `Vessel ${name} (MMSI: ${v.mmsi}) reporting status "${statusLabel}" at ${v.lat.toFixed(3)}°, ${v.lon.toFixed(3)}°. Speed: ${v.sog.toFixed(1)} kn.`,
+      link: `https://www.marinetraffic.com/en/ais/details/ships/mmsi:${v.mmsi}`,
+      pubDate: v.time,
+      source: 'AISStream (Real-time AIS)',
+      tags,
+    });
+  }
+
+  // Aggregate anchored vessels by region
+  const byRegion = new Map<string, AISVessel[]>();
+  for (const v of vessels) {
+    if (v.navStatus !== 1) continue; // At Anchor only
+    const region = regionLabel(v.lat, v.lon);
+    if (!byRegion.has(region)) byRegion.set(region, []);
+    byRegion.get(region)!.push(v);
+  }
+
+  for (const [region, anchored] of byRegion) {
+    const count = anchored.length;
+    if (count < 2) continue; // Skip single anchored vessels – not notable
+    const tags = ['Oil/Fuel'];
+    if (region.includes('Hormuz') || region.includes('Gulf')) tags.push('Gulf');
+    if (region.includes('Suez') || region.includes('Red Sea')) tags.push('Red Sea / Suez');
+    posts.push({
+      title: `⚓ ${count} vessel${count > 1 ? 's' : ''} at anchor — ${region}`,
+      summary: `AIS data shows ${count} vessels reporting "At Anchor" status in the ${region} area. May indicate port congestion, weather hold, or regulatory inspection.`,
+      link: `https://www.marinetraffic.com/en/ais/home/centerx:${anchored[0].lon.toFixed(1)}/centery:${anchored[0].lat.toFixed(1)}/zoom:8`,
+      pubDate: anchored[0].time,
+      source: 'AISStream (Real-time AIS)',
+      tags,
+    });
+  }
+
+  return posts;
+}
+
+export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
+  const apiKey = process.env.AISSTREAM_API_KEY;
+  if (!apiKey) return [];
+
+  return new Promise((resolve) => {
+    const vessels = new Map<number, AISVessel>();
+    let settled = false;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      ws.terminate();
+      resolve(vesselsToDisruptions([...vessels.values()]));
+    };
+
+    const ws = new WS(AISSTREAM_WS);
+
+    // Collect for 8 seconds then process
+    const timer = setTimeout(finish, 8000);
+
+    ws.on('open', () => {
+      ws.send(JSON.stringify({
+        APIKey: apiKey,
+        BoundingBoxes: ENERGY_BOXES,
+        FilterMessageTypes: ['PositionReport'],
+      }));
+    });
+
+    ws.on('message', (data: WS.RawData) => {
+      try {
+        const msg = JSON.parse(data.toString());
+        if (msg.MessageType !== 'PositionReport') return;
+
+        const meta = msg.MetaData;
+        const report = msg.Message?.PositionReport;
+        if (!meta || !report) return;
+
+        const navStatus: number = report.NavigationalStatus ?? 15;
+        if (!DISRUPTION_STATUSES.has(navStatus)) return;
+
+        vessels.set(meta.MMSI, {
+          mmsi: meta.MMSI,
+          name: (meta.ShipName ?? '').trim(),
+          lat: meta.latitude,
+          lon: meta.longitude,
+          navStatus,
+          sog: report.Sog ?? 0,
+          time: parseAISTime(meta.time_utc ?? ''),
+        });
+      } catch { /* ignore malformed messages */ }
+    });
+
+    ws.on('error', () => { clearTimeout(timer); finish(); });
+    ws.on('close', () => { clearTimeout(timer); finish(); });
+  });
+}
+
 // --- RSS / XML helpers -------------------------------------------------------
 
-/** Extract text content of the first matching XML tag */
 function xmlText(xml: string, tag: string): string {
   const m = xml.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>|<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
   return (m?.[1] ?? m?.[2] ?? '').trim();
 }
 
-/** Split an RSS feed XML string into individual <item> blocks */
 function extractItems(xml: string): string[] {
   const items: string[] = [];
   const re = /<item[^>]*>([\s\S]*?)<\/item>/gi;
@@ -60,7 +213,7 @@ function parseRSSItems(xml: string, sourceName: string): DisruptionPost[] {
   });
 }
 
-// --- Source 1: Nitter RSS (Twitter mirror, no API key) -----------------------
+// --- Source 1: Nitter RSS (Twitter mirror) ------------------------------------
 
 const NITTER_INSTANCES = [
   'https://nitter.privacydev.net',
@@ -69,59 +222,46 @@ const NITTER_INSTANCES = [
   'https://nitter.hostux.net',
 ];
 
-const MARITIME_ACCOUNTS = [
-  'WindwardAI',
-  'MarineTraffic',
-  'Portwatch_IMF',
-];
+const MARITIME_ACCOUNTS = ['WindwardAI', 'MarineTraffic', 'Portwatch_IMF'];
 
 async function fetchNitterRSS(account: string): Promise<DisruptionPost[]> {
   for (const instance of NITTER_INSTANCES) {
     try {
-      const url = `${instance}/${account}/rss`;
-      const res = await fetch(url, {
+      const res = await fetch(`${instance}/${account}/rss`, {
         signal: AbortSignal.timeout(6000),
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FuelTracker/1.0)' },
-        next: { revalidate: 900 }, // 15-min cache
+        next: { revalidate: 900 },
       });
       if (!res.ok) continue;
       const xml = await res.text();
       if (!xml.includes('<item')) continue;
       const posts = parseRSSItems(xml, `X/@${account} via Nitter`);
       if (posts.length > 0) return posts;
-    } catch {
-      // try next instance
-    }
+    } catch { /* try next instance */ }
   }
   return [];
 }
 
 export async function fetchNitterDisruptions(): Promise<DisruptionPost[]> {
-  const results = await Promise.allSettled(
-    MARITIME_ACCOUNTS.map(acc => fetchNitterRSS(acc))
-  );
+  const results = await Promise.allSettled(MARITIME_ACCOUNTS.map(fetchNitterRSS));
   const posts: DisruptionPost[] = [];
   for (const r of results) {
     if (r.status === 'fulfilled') posts.push(...r.value);
   }
-  // Sort newest-first
   posts.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
   return posts.slice(0, 20);
 }
 
 // --- Source 2: MARAD maritime security advisories ----------------------------
 
-const MARAD_RSS = 'https://www.maritime.dot.gov/sites/marad.dot.gov/files/msci-advisories.rss';
-
 export async function fetchMARADAdvisories(): Promise<DisruptionPost[]> {
   try {
-    const res = await fetch(MARAD_RSS, {
+    const res = await fetch('https://www.maritime.dot.gov/sites/marad.dot.gov/files/msci-advisories.rss', {
       signal: AbortSignal.timeout(8000),
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
-    const xml = await res.text();
-    return parseRSSItems(xml, 'MARAD – US Maritime Administration');
+    return parseRSSItems(await res.text(), 'MARAD – US Maritime Administration');
   } catch {
     return [];
   }
@@ -129,17 +269,14 @@ export async function fetchMARADAdvisories(): Promise<DisruptionPost[]> {
 
 // --- Source 3: gCaptain RSS --------------------------------------------------
 
-const GCAPTAIN_RSS = 'https://gcaptain.com/feed/';
-
 export async function fetchGCaptainRSS(): Promise<DisruptionPost[]> {
   try {
-    const res = await fetch(GCAPTAIN_RSS, {
+    const res = await fetch('https://gcaptain.com/feed/', {
       signal: AbortSignal.timeout(8000),
       next: { revalidate: 1800 },
     });
     if (!res.ok) return [];
-    const xml = await res.text();
-    return parseRSSItems(xml, 'gCaptain Maritime News');
+    return parseRSSItems(await res.text(), 'gCaptain Maritime News');
   } catch {
     return [];
   }
@@ -147,17 +284,14 @@ export async function fetchGCaptainRSS(): Promise<DisruptionPost[]> {
 
 // --- Source 4: MarineTraffic blog RSS ----------------------------------------
 
-const MARINETRAFFIC_RSS = 'https://www.marinetraffic.com/blog/feed/';
-
 export async function fetchMarineTrafficRSS(): Promise<DisruptionPost[]> {
   try {
-    const res = await fetch(MARINETRAFFIC_RSS, {
+    const res = await fetch('https://www.marinetraffic.com/blog/feed/', {
       signal: AbortSignal.timeout(8000),
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
-    const xml = await res.text();
-    return parseRSSItems(xml, 'MarineTraffic Blog');
+    return parseRSSItems(await res.text(), 'MarineTraffic Blog');
   } catch {
     return [];
   }
@@ -165,17 +299,14 @@ export async function fetchMarineTrafficRSS(): Promise<DisruptionPost[]> {
 
 // --- Source 5: Lloyd's List free RSS -----------------------------------------
 
-const LLOYDS_RSS = 'https://www.lloydslist.com/rss/ll-home.xml';
-
 export async function fetchLloydsListRSS(): Promise<DisruptionPost[]> {
   try {
-    const res = await fetch(LLOYDS_RSS, {
+    const res = await fetch('https://www.lloydslist.com/rss/ll-home.xml', {
       signal: AbortSignal.timeout(8000),
       next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
-    const xml = await res.text();
-    return parseRSSItems(xml, 'Lloyd\'s List');
+    return parseRSSItems(await res.text(), "Lloyd's List");
   } catch {
     return [];
   }
@@ -204,7 +335,9 @@ export interface DisruptionsResult {
 }
 
 export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
-  const [nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
+  // AISStream runs first (primary), RSS feeds run in parallel as fallbacks
+  const [aisResult, nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
+    fetchAISStreamDisruptions(),
     fetchNitterDisruptions(),
     fetchMARADAdvisories(),
     fetchGCaptainRSS(),
@@ -222,6 +355,8 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
     }
   }
 
+  // AISStream goes first so its posts rank highest
+  add(aisResult, 'AISStream (Real-time AIS)');
   add(nitter, 'Nitter RSS (@WindwardAI, @MarineTraffic, @Portwatch_IMF)');
   add(marad, 'MARAD Official Advisories');
   add(gcaptain, 'gCaptain');
@@ -236,10 +371,8 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
     return true;
   });
 
-  // Relevant posts first, then all sorted by date
   const relevant = unique.filter(isRelevant);
   relevant.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
-
   const all = [...unique].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 
   return {
