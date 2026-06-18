@@ -34,15 +34,17 @@ const ENERGY_BOXES: [[number, number], [number, number]][] = [
 ];
 
 const NAV_STATUS_LABEL: Record<number, string> = {
+  0: 'Under Way (Engine)',
   1: 'At Anchor',
   2: 'Not Under Command',
   3: 'Restricted Manoeuvrability',
   4: 'Constrained by Draught',
+  5: 'Moored',
   6: 'Aground',
+  7: 'Engaged in Fishing',
+  8: 'Under Way (Sailing)',
+  15: 'Unknown',
 };
-
-// Only report these statuses as potential disruptions
-const DISRUPTION_STATUSES = new Set([1, 2, 3, 4, 6]);
 
 interface AISVessel {
   mmsi: number;
@@ -73,19 +75,27 @@ function parseAISTime(timeUtc: string): string {
   }
 }
 
+function regionTags(region: string): string[] {
+  const tags: string[] = ['Oil/Fuel'];
+  if (region.includes('Hormuz') || region.includes('Gulf')) tags.push('Gulf');
+  if (region.includes('Suez') || region.includes('Red Sea') || region.includes('Bab')) tags.push('Red Sea / Suez');
+  return tags;
+}
+
 function vesselsToDisruptions(vessels: AISVessel[]): DisruptionPost[] {
   const posts: DisruptionPost[] = [];
 
-  // Critical single-vessel events: aground or not under command
-  const critical = vessels.filter(v => v.navStatus === 2 || v.navStatus === 6);
-  for (const v of critical) {
+  // Tier 1: Individual posts for all noteworthy statuses (non-under-way)
+  const noteworthy = vessels.filter(v => v.navStatus >= 1 && v.navStatus <= 6);
+  for (const v of noteworthy) {
     const region = regionLabel(v.lat, v.lon);
-    const statusLabel = NAV_STATUS_LABEL[v.navStatus];
+    const statusLabel = NAV_STATUS_LABEL[v.navStatus] ?? 'Unknown';
     const name = v.name || `MMSI ${v.mmsi}`;
-    const tags = ['Disruption', region];
-    if (v.navStatus === 6) tags.push('Aground');
+    const isCritical = v.navStatus === 2 || v.navStatus === 6;
+    const emoji = isCritical ? '🚨' : '⚠️';
+    const tags = isCritical ? ['Disruption', region] : regionTags(region);
     posts.push({
-      title: `🚨 ${name} — ${statusLabel} in ${region}`,
+      title: `${emoji} ${name} — ${statusLabel} in ${region}`,
       summary: `Vessel ${name} (MMSI: ${v.mmsi}) reporting status "${statusLabel}" at ${v.lat.toFixed(3)}°, ${v.lon.toFixed(3)}°. Speed: ${v.sog.toFixed(1)} kn.`,
       link: `https://www.marinetraffic.com/en/ais/details/ships/mmsi:${v.mmsi}`,
       pubDate: v.time,
@@ -94,32 +104,32 @@ function vesselsToDisruptions(vessels: AISVessel[]): DisruptionPost[] {
     });
   }
 
-  // Aggregate anchored vessels by region
-  const byRegion = new Map<string, AISVessel[]>();
+  // Tier 2: Aggregate under-way vessels (status 0, 7, 8, 15) by region
+  const normalByRegion = new Map<string, number>();
   for (const v of vessels) {
-    if (v.navStatus !== 1) continue; // At Anchor only
+    if (v.navStatus >= 1 && v.navStatus <= 6) continue;
     const region = regionLabel(v.lat, v.lon);
-    if (!byRegion.has(region)) byRegion.set(region, []);
-    byRegion.get(region)!.push(v);
+    normalByRegion.set(region, (normalByRegion.get(region) ?? 0) + 1);
   }
-
-  for (const [region, anchored] of byRegion) {
-    const count = anchored.length;
-    if (count < 2) continue; // Skip single anchored vessels – not notable
-    const tags = ['Oil/Fuel'];
-    if (region.includes('Hormuz') || region.includes('Gulf')) tags.push('Gulf');
-    if (region.includes('Suez') || region.includes('Red Sea')) tags.push('Red Sea / Suez');
+  for (const [region, count] of normalByRegion) {
+    const representative = vessels.find(v => regionLabel(v.lat, v.lon) === region);
     posts.push({
-      title: `⚓ ${count} vessel${count > 1 ? 's' : ''} at anchor — ${region}`,
-      summary: `AIS data shows ${count} vessels reporting "At Anchor" status in the ${region} area. May indicate port congestion, weather hold, or regulatory inspection.`,
-      link: `https://www.marinetraffic.com/en/ais/home/centerx:${anchored[0].lon.toFixed(1)}/centery:${anchored[0].lat.toFixed(1)}/zoom:8`,
-      pubDate: anchored[0].time,
+      title: `🚢 ${count} vessel${count !== 1 ? 's' : ''} under way — ${region}`,
+      summary: `AIS data shows ${count} vessel${count !== 1 ? 's' : ''} actively transiting the ${region} area.`,
+      link: representative
+        ? `https://www.marinetraffic.com/en/ais/home/centerx:${representative.lon.toFixed(1)}/centery:${representative.lat.toFixed(1)}/zoom:8`
+        : 'https://www.marinetraffic.com',
+      pubDate: representative?.time ?? new Date().toISOString(),
       source: 'AISStream (Real-time AIS)',
-      tags,
+      tags: regionTags(region),
     });
   }
 
-  return posts;
+  // Critical first, then warnings, then traffic summaries; cap at 30 AISStream posts
+  const critical = posts.filter(p => p.title.startsWith('🚨'));
+  const warnings = posts.filter(p => p.title.startsWith('⚠️'));
+  const traffic  = posts.filter(p => p.title.startsWith('🚢'));
+  return [...critical, ...warnings, ...traffic].slice(0, 30);
 }
 
 export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
@@ -160,7 +170,6 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
         if (!meta || !report) return;
 
         const navStatus: number = report.NavigationalStatus ?? 15;
-        if (!DISRUPTION_STATUSES.has(navStatus)) return;
 
         vessels.set(meta.MMSI, {
           mmsi: meta.MMSI,
@@ -230,7 +239,7 @@ async function fetchNitterRSS(account: string): Promise<DisruptionPost[]> {
       const res = await fetch(`${instance}/${account}/rss`, {
         signal: AbortSignal.timeout(6000),
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FuelTracker/1.0)' },
-        next: { revalidate: 900 },
+        next: { revalidate: 3600 },
       });
       if (!res.ok) continue;
       const xml = await res.text();
@@ -273,7 +282,7 @@ export async function fetchGCaptainRSS(): Promise<DisruptionPost[]> {
   try {
     const res = await fetch('https://gcaptain.com/feed/', {
       signal: AbortSignal.timeout(8000),
-      next: { revalidate: 1800 },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return [];
     return parseRSSItems(await res.text(), 'gCaptain Maritime News');
