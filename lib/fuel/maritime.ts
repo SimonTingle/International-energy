@@ -133,83 +133,9 @@ function vesselsToDisruptions(vessels: AISVessel[]): DisruptionPost[] {
   return [...critical, ...warnings, ...traffic].slice(0, 30);
 }
 
-export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
-  const apiKey = process.env.AISSTREAM_API_KEY;
-  if (!apiKey) {
-    console.warn('[AISStream] AISSTREAM_API_KEY not set — skipping');
-    return [];
-  }
-  console.log('[AISStream] Connecting to', AISSTREAM_WS);
-
-  return new Promise((resolve) => {
-    const vessels = new Map<number, AISVessel>();
-    let settled = false;
-
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      ws.terminate();
-      const posts = vesselsToDisruptions([...vessels.values()]);
-      console.log(`[AISStream] Done — ${vessels.size} vessels → ${posts.length} posts`);
-      resolve(posts);
-    };
-
-    const ws = new WS(AISSTREAM_WS);
-
-    // Collect for 8 seconds then process
-    const timer = setTimeout(finish, 20000); // 20s window — more vessels collected
-
-    ws.on('open', () => {
-      console.log('[AISStream] Connected — subscribing to', ENERGY_BOXES.length, 'bounding boxes');
-      ws.send(JSON.stringify({
-        APIKey: apiKey,
-        BoundingBoxes: ENERGY_BOXES,
-        FilterMessageTypes: ['PositionReport'],
-      }));
-    });
-
-    ws.on('message', (data: WS.RawData) => {
-      try {
-        const msg = JSON.parse(data.toString());
-        if (msg.MessageType !== 'PositionReport') return;
-
-        const meta = msg.MetaData;
-        const report = msg.Message?.PositionReport;
-        if (!meta || !report) return;
-
-        const navStatus: number = report.NavigationalStatus ?? 15;
-        const heading: number = report.Heading ?? report.CourseOverGround ?? 0;
-
-        vessels.set(meta.MMSI, {
-          mmsi: meta.MMSI,
-          name: (meta.ShipName ?? '').trim(),
-          lat: meta.latitude,
-          lon: meta.longitude,
-          navStatus,
-          sog: report.Sog ?? 0,
-          time: parseAISTime(meta.time_utc ?? ''),
-          heading,
-        });
-
-        if (vessels.size % 10 === 0)
-          console.log(`[AISStream] ${vessels.size} vessels received so far...`);
-      } catch { /* ignore malformed messages */ }
-    });
-
-    ws.on('error', (err) => {
-      console.error('[AISStream] WebSocket error:', err.message);
-      clearTimeout(timer);
-      finish();
-    });
-    ws.on('close', () => {
-      console.log('[AISStream] Connection closed');
-      clearTimeout(timer);
-      finish();
-    });
-  });
-}
-
-export async function fetchAllVessels(): Promise<AISVessel[]> {
+// PRIVATE: Single AISStream connection function — called only by buildCache()
+// (Removed old fetchAISStreamDisruptions — now unified into _fetchRawVessels)
+async function _fetchRawVessels(): Promise<AISVessel[]> {
   const apiKey = process.env.AISSTREAM_API_KEY;
   if (!apiKey) {
     console.warn('[AISStream-Vessels] AISSTREAM_API_KEY not set — skipping');
@@ -450,7 +376,7 @@ async function buildCache(): Promise<SharedCache> {
   // Run AISStream ONCE and reuse result for both disruptions and vessel map.
   // RSS feeds run in parallel (they don't use AISStream).
   const [aisVessels, nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
-    fetchAllVessels(),   // raw vessels — used for map markers
+    _fetchRawVessels(),  // ONLY AISStream connection — shared for both disruptions & vessels
     fetchNitterDisruptions(),
     fetchMARADAdvisories(),
     fetchGCaptainRSS(),
