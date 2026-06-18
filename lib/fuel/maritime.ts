@@ -134,7 +134,11 @@ function vesselsToDisruptions(vessels: AISVessel[]): DisruptionPost[] {
 
 export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
   const apiKey = process.env.AISSTREAM_API_KEY;
-  if (!apiKey) return [];
+  if (!apiKey) {
+    console.warn('[AISStream] AISSTREAM_API_KEY not set — skipping');
+    return [];
+  }
+  console.log('[AISStream] Connecting to', AISSTREAM_WS);
 
   return new Promise((resolve) => {
     const vessels = new Map<number, AISVessel>();
@@ -144,7 +148,9 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
       if (settled) return;
       settled = true;
       ws.terminate();
-      resolve(vesselsToDisruptions([...vessels.values()]));
+      const posts = vesselsToDisruptions([...vessels.values()]);
+      console.log(`[AISStream] Done — ${vessels.size} vessels → ${posts.length} posts`);
+      resolve(posts);
     };
 
     const ws = new WS(AISSTREAM_WS);
@@ -153,6 +159,7 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
     const timer = setTimeout(finish, 8000);
 
     ws.on('open', () => {
+      console.log('[AISStream] Connected — subscribing to', ENERGY_BOXES.length, 'bounding boxes');
       ws.send(JSON.stringify({
         APIKey: apiKey,
         BoundingBoxes: ENERGY_BOXES,
@@ -180,11 +187,22 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
           sog: report.Sog ?? 0,
           time: parseAISTime(meta.time_utc ?? ''),
         });
+
+        if (vessels.size % 10 === 0)
+          console.log(`[AISStream] ${vessels.size} vessels received so far...`);
       } catch { /* ignore malformed messages */ }
     });
 
-    ws.on('error', () => { clearTimeout(timer); finish(); });
-    ws.on('close', () => { clearTimeout(timer); finish(); });
+    ws.on('error', (err) => {
+      console.error('[AISStream] WebSocket error:', err.message);
+      clearTimeout(timer);
+      finish();
+    });
+    ws.on('close', () => {
+      console.log('[AISStream] Connection closed');
+      clearTimeout(timer);
+      finish();
+    });
   });
 }
 
