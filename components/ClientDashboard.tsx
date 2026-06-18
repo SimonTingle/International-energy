@@ -17,6 +17,10 @@ const EnergyPanel = dynamic(() => import("@/components/EnergyPanel"), {
   ssr: false,
 });
 
+const DisruptionsPanel = dynamic(() => import("@/components/DisruptionsPanel"), {
+  ssr: false,
+});
+
 export default function ClientDashboard({
   countries,
 }: {
@@ -40,6 +44,7 @@ export default function ClientDashboard({
       <div className="absolute inset-0">
         <EnergyMap countries={countries} />
       </div>
+      <DisruptionsPanel />
       <EnergyPanel />
     </div>
   );

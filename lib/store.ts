@@ -7,12 +7,14 @@ interface DashboardStore extends PanelState {
   setSelectedCountry: (country: CountryData | null) => void;
   setIsExpanded: (expanded: boolean) => void;
   toggleExpanded: () => void;
+  toggleDisruptionsVisible: () => void;
   reset: () => void;
 }
 
 export const useDashboardStore = create<DashboardStore>((set) => ({
   selectedCountry: null,
   isExpanded: false,
+  disruptionsVisible: true,
   setSelectedCountry: (country) =>
     set({ selectedCountry: country }),
   setIsExpanded: (expanded) =>
@@ -22,6 +24,12 @@ export const useDashboardStore = create<DashboardStore>((set) => ({
       const newExpanded = !state.isExpanded;
       console.log(`🔄 STATE: Toggle expand = ${newExpanded}`);
       return { isExpanded: newExpanded };
+    }),
+  toggleDisruptionsVisible: () =>
+    set((state) => {
+      const newVisible = !state.disruptionsVisible;
+      console.log(`🔄 STATE: Toggle disruptions = ${newVisible}`);
+      return { disruptionsVisible: newVisible };
     }),
   reset: () => {
     console.log("🔄 STATE: Reset panel");
