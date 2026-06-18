@@ -14,7 +14,7 @@
 import { fetchAllDisruptions } from '@/lib/fuel/maritime';
 
 export const runtime = 'nodejs'; // ws package requires Node.js runtime
-export const revalidate = 3600; // 1 hour
+export const dynamic = 'force-dynamic'; // never pre-render at build time — env vars only available at runtime
 
 export async function GET() {
   const data = await fetchAllDisruptions();
