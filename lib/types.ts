@@ -25,4 +25,5 @@ export interface CountryStats {
 export interface PanelState {
   selectedCountry: CountryData | null;
   isExpanded: boolean;
+  disruptionsVisible: boolean;
 }
