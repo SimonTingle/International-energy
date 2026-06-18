@@ -157,7 +157,7 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
     const ws = new WS(AISSTREAM_WS);
 
     // Collect for 8 seconds then process
-    const timer = setTimeout(finish, 8000);
+    const timer = setTimeout(finish, 20000); // 20s window — more vessels collected
 
     ws.on('open', () => {
       console.log('[AISStream] Connected — subscribing to', ENERGY_BOXES.length, 'bounding boxes');
@@ -229,7 +229,7 @@ export async function fetchAllVessels(): Promise<AISVessel[]> {
     };
 
     const ws = new WS(AISSTREAM_WS);
-    const timer = setTimeout(finish, 8000);
+    const timer = setTimeout(finish, 20000); // 20s window — more vessels collected
 
     ws.on('open', () => {
       console.log('[AISStream-Vessels] Connected');
@@ -433,26 +433,35 @@ export interface DisruptionsResult {
   note: string;
 }
 
-// Server-side cache — prevents multiple concurrent requests each opening AISStream
-let _cache: DisruptionsResult | null = null;
+// Shared server-side cache — ONE AISStream connection feeds both disruptions and vessel map
+interface SharedCache {
+  disruptions: DisruptionsResult;
+  vessels: AISVessel[];
+}
+
+let _cache: SharedCache | null = null;
 let _cacheExpiry = 0;
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
-export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
-  if (_cache && Date.now() < _cacheExpiry) {
-    console.log('[disruptions] Returning cached data (expires in', Math.round((_cacheExpiry - Date.now()) / 60000), 'min)');
-    return _cache;
-  }
+// In-flight promise to prevent concurrent AISStream connections during cache miss
+let _inflight: Promise<SharedCache> | null = null;
 
-  // AISStream runs first (primary), RSS feeds run in parallel as fallbacks
-  const [aisResult, nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
-    fetchAISStreamDisruptions(),
+async function buildCache(): Promise<SharedCache> {
+  // Run AISStream ONCE and reuse result for both disruptions and vessel map.
+  // RSS feeds run in parallel (they don't use AISStream).
+  const [aisVessels, nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
+    fetchAllVessels(),   // raw vessels — used for map markers
     fetchNitterDisruptions(),
     fetchMARADAdvisories(),
     fetchGCaptainRSS(),
     fetchMarineTrafficRSS(),
     fetchLloydsListRSS(),
   ]);
+
+  const vessels: AISVessel[] = aisVessels.status === 'fulfilled' ? aisVessels.value : [];
+
+  // Convert vessels to disruption posts
+  const aisPosts = vesselsToDisruptions(vessels);
 
   const allPosts: DisruptionPost[] = [];
   const sources: string[] = [];
@@ -464,15 +473,16 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
     }
   }
 
-  // AISStream goes first so its posts rank highest
-  add(aisResult, 'AISStream (Real-time AIS)');
+  if (aisPosts.length > 0) {
+    allPosts.push(...aisPosts);
+    sources.push('AISStream (Real-time AIS)');
+  }
   add(nitter, 'Nitter RSS (@WindwardAI, @MarineTraffic, @Portwatch_IMF)');
   add(marad, 'MARAD Official Advisories');
   add(gcaptain, 'gCaptain');
   add(mt, 'MarineTraffic Blog');
   add(ll, "Lloyd's List");
 
-  // Deduplicate by link
   const seen = new Set<string>();
   const unique = allPosts.filter(p => {
     if (seen.has(p.link)) return false;
@@ -484,7 +494,7 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
   relevant.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
   const all = [...unique].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 
-  const result: DisruptionsResult = {
+  const disruptions: DisruptionsResult = {
     posts: relevant.slice(0, 15),
     allPosts: all.slice(0, 50),
     fetchedAt: new Date().toISOString(),
@@ -494,7 +504,37 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
       : `Live data from: ${sources.join(', ')}`,
   };
 
-  _cache = result;
-  _cacheExpiry = Date.now() + CACHE_TTL_MS;
-  return result;
+  return { disruptions, vessels };
+}
+
+async function getCache(): Promise<SharedCache> {
+  if (_cache && Date.now() < _cacheExpiry) {
+    console.log('[maritime] Cache hit (expires in', Math.round((_cacheExpiry - Date.now()) / 60000), 'min)');
+    return _cache;
+  }
+
+  // Coalesce concurrent requests into one AISStream connection
+  if (!_inflight) {
+    _inflight = buildCache().then(result => {
+      _cache = result;
+      _cacheExpiry = Date.now() + CACHE_TTL_MS;
+      _inflight = null;
+      return result;
+    }).catch(err => {
+      _inflight = null;
+      throw err;
+    });
+  }
+
+  return _inflight;
+}
+
+export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
+  const { disruptions } = await getCache();
+  return disruptions;
+}
+
+export async function getVesselsFromCache(): Promise<AISVessel[]> {
+  const { vessels } = await getCache();
+  return vessels;
 }
