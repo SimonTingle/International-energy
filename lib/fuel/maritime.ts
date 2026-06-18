@@ -361,7 +361,17 @@ export interface DisruptionsResult {
   note: string;
 }
 
+// Server-side cache — prevents multiple concurrent requests each opening AISStream
+let _cache: DisruptionsResult | null = null;
+let _cacheExpiry = 0;
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
 export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
+  if (_cache && Date.now() < _cacheExpiry) {
+    console.log('[disruptions] Returning cached data (expires in', Math.round((_cacheExpiry - Date.now()) / 60000), 'min)');
+    return _cache;
+  }
+
   // AISStream runs first (primary), RSS feeds run in parallel as fallbacks
   const [aisResult, nitter, marad, gcaptain, mt, ll] = await Promise.allSettled([
     fetchAISStreamDisruptions(),
@@ -402,7 +412,7 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
   relevant.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
   const all = [...unique].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
 
-  return {
+  const result: DisruptionsResult = {
     posts: relevant.slice(0, 15),
     allPosts: all.slice(0, 50),
     fetchedAt: new Date().toISOString(),
@@ -411,4 +421,8 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
       ? 'No maritime feeds reachable – check network connectivity'
       : `Live data from: ${sources.join(', ')}`,
   };
+
+  _cache = result;
+  _cacheExpiry = Date.now() + CACHE_TTL_MS;
+  return result;
 }
