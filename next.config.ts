@@ -3,9 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  // Required for Railway.app: binds to $PORT env variable
-  // Railway sets PORT automatically; Next.js reads it when starting.
-  // Start command: npm start  (which runs: next start -p ${PORT:-3000})
+  // Prevent Next.js from bundling ws — webpack strips the native buffer
+  // masking operations ws needs, causing "b.mask is not a function" at runtime.
+  // Listed here so Next.js loads ws directly from node_modules at runtime.
+  serverExternalPackages: ['ws'],
 
   webpack: (config, { isServer }) => {
     if (isServer) {
