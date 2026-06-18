@@ -114,9 +114,9 @@ export default function LiveDisruptions() {
 
   useEffect(() => { load(); }, []);
 
-  // Auto-refresh every 15 minutes
+  // Auto-refresh every hour (matches server-side revalidate)
   useEffect(() => {
-    const id = setInterval(load, 15 * 60 * 1000);
+    const id = setInterval(load, 60 * 60 * 1000);
     return () => clearInterval(id);
   }, []);
 
