@@ -54,6 +54,7 @@ interface AISVessel {
   navStatus: number;
   sog: number;
   time: string;
+  heading: number;
 }
 
 function regionLabel(lat: number, lon: number): string {
@@ -177,6 +178,7 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
         if (!meta || !report) return;
 
         const navStatus: number = report.NavigationalStatus ?? 15;
+        const heading: number = report.Heading ?? report.CourseOverGround ?? 0;
 
         vessels.set(meta.MMSI, {
           mmsi: meta.MMSI,
@@ -186,6 +188,7 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
           navStatus,
           sog: report.Sog ?? 0,
           time: parseAISTime(meta.time_utc ?? ''),
+          heading,
         });
 
         if (vessels.size % 10 === 0)
@@ -200,6 +203,75 @@ export async function fetchAISStreamDisruptions(): Promise<DisruptionPost[]> {
     });
     ws.on('close', () => {
       console.log('[AISStream] Connection closed');
+      clearTimeout(timer);
+      finish();
+    });
+  });
+}
+
+export async function fetchAllVessels(): Promise<AISVessel[]> {
+  const apiKey = process.env.AISSTREAM_API_KEY;
+  if (!apiKey) {
+    console.warn('[AISStream-Vessels] AISSTREAM_API_KEY not set — skipping');
+    return [];
+  }
+
+  return new Promise((resolve) => {
+    const vessels = new Map<number, AISVessel>();
+    let settled = false;
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      ws.terminate();
+      console.log(`[AISStream-Vessels] Done — ${vessels.size} vessels collected`);
+      resolve([...vessels.values()]);
+    };
+
+    const ws = new WS(AISSTREAM_WS);
+    const timer = setTimeout(finish, 8000);
+
+    ws.on('open', () => {
+      console.log('[AISStream-Vessels] Connected');
+      ws.send(JSON.stringify({
+        APIKey: apiKey,
+        BoundingBoxes: ENERGY_BOXES,
+        FilterMessageTypes: ['PositionReport'],
+      }));
+    });
+
+    ws.on('message', (data: WS.RawData) => {
+      try {
+        const msg = JSON.parse(data.toString());
+        if (msg.MessageType !== 'PositionReport') return;
+
+        const meta = msg.MetaData;
+        const report = msg.Message?.PositionReport;
+        if (!meta || !report) return;
+
+        const navStatus: number = report.NavigationalStatus ?? 15;
+        const heading: number = report.Heading ?? report.CourseOverGround ?? 0;
+
+        vessels.set(meta.MMSI, {
+          mmsi: meta.MMSI,
+          name: (meta.ShipName ?? '').trim(),
+          lat: meta.latitude,
+          lon: meta.longitude,
+          navStatus,
+          sog: report.Sog ?? 0,
+          time: parseAISTime(meta.time_utc ?? ''),
+          heading,
+        });
+      } catch { /* ignore malformed messages */ }
+    });
+
+    ws.on('error', (err) => {
+      console.error('[AISStream-Vessels] WebSocket error:', err.message);
+      clearTimeout(timer);
+      finish();
+    });
+    ws.on('close', () => {
+      console.log('[AISStream-Vessels] Connection closed');
       clearTimeout(timer);
       finish();
     });
