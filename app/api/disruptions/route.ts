@@ -13,11 +13,11 @@
 
 import { fetchAllDisruptions } from '@/lib/fuel/maritime';
 
-export const revalidate = 900; // 15 min
+export const revalidate = 3600; // 1 hour
 
 export async function GET() {
   const data = await fetchAllDisruptions();
   return Response.json(data, {
-    headers: { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800' },
+    headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' },
   });
 }
