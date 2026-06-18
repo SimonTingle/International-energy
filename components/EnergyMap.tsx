@@ -5,6 +5,30 @@ import L from "leaflet";
 import { CountryData } from "@/lib/types";
 import { useDashboardStore } from "@/lib/store";
 
+interface Vessel {
+  mmsi: number;
+  name: string;
+  lat: number;
+  lon: number;
+  navStatus: number;
+  sog: number;
+  time: string;
+  heading: number;
+}
+
+const NAV_STATUS_LABEL: Record<number, string> = {
+  0: 'Under Way (Engine)',
+  1: 'At Anchor',
+  2: 'Not Under Command',
+  3: 'Restricted Manoeuvrability',
+  4: 'Constrained by Draught',
+  5: 'Moored',
+  6: 'Aground',
+  7: 'Engaged in Fishing',
+  8: 'Under Way (Sailing)',
+  15: 'Unknown',
+};
+
 interface EnergyMapProps {
   countries: CountryData[];
 }
@@ -14,6 +38,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
   const map = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.CircleMarker>>(new Map());
   const markerColorsRef = useRef<Map<string, string>>(new Map());
+  const vesselMarkersRef = useRef<Map<number, L.Marker>>(new Map());
   const { setSelectedCountry, selectedCountry } = useDashboardStore();
 
   useEffect(() => {
@@ -118,6 +143,70 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
       }
     });
   }, [selectedCountry]);
+
+  // Fetch and render vessel markers
+  useEffect(() => {
+    if (!map.current) return;
+
+    const fetchVessels = async () => {
+      try {
+        const res = await fetch("/api/vessels");
+        const { vessels } = await res.json();
+        renderVesselMarkers(vessels);
+      } catch (err) {
+        console.error("Failed to fetch vessels:", err);
+      }
+    };
+
+    fetchVessels();
+    const interval = setInterval(fetchVessels, 3600000); // Refresh hourly
+    return () => clearInterval(interval);
+  }, []);
+
+  const renderVesselMarkers = (vessels: Vessel[]) => {
+    // Clear old vessel markers
+    vesselMarkersRef.current.forEach((marker) => marker.remove());
+    vesselMarkersRef.current.clear();
+
+    // Render each vessel as a rotated red triangle
+    vessels.forEach((vessel) => {
+      const iconHtml = `<div style="
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-bottom: 8px solid #ef4444;
+        transform: rotate(${vessel.heading}deg);
+        filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
+      "></div>`;
+
+      const icon = L.divIcon({
+        html: iconHtml,
+        className: "vessel-marker",
+        iconSize: [8, 8],
+        iconAnchor: [4, 4],
+      });
+
+      const marker = L.marker([vessel.lat, vessel.lon], { icon });
+
+      const popupContent = `
+        <div style="font-size: 12px;">
+          <strong>${vessel.name || `MMSI ${vessel.mmsi}`}</strong><br/>
+          MMSI: ${vessel.mmsi}<br/>
+          Status: ${NAV_STATUS_LABEL[vessel.navStatus] || 'Unknown'}<br/>
+          Speed: ${vessel.sog.toFixed(1)} knots<br/>
+          Heading: ${vessel.heading}°<br/>
+          <a href="https://www.marinetraffic.com/en/ais/details/ships/mmsi:${vessel.mmsi}" target="_blank" rel="noopener noreferrer" style="color: #0ea5e9;">View on MarineTraffic</a>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent);
+      marker.addTo(map.current!);
+      vesselMarkersRef.current.set(vessel.mmsi, marker);
+    });
+
+    console.log(`🚢 VESSELS: Rendered ${vessels.length} vessel markers`);
+  };
 
   return (
     <div
