@@ -13,6 +13,7 @@
 
 import { fetchAllDisruptions } from '@/lib/fuel/maritime';
 
+export const runtime = 'nodejs'; // ws package requires Node.js runtime
 export const revalidate = 3600; // 1 hour
 
 export async function GET() {
