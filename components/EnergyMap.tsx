@@ -14,6 +14,8 @@ interface Vessel {
   sog: number;
   time: string;
   heading: number;
+  shipType: number;
+  category: string;
 }
 
 const NAV_STATUS_LABEL: Record<number, string> = {
@@ -193,6 +195,7 @@ export default function EnergyMap({ countries }: EnergyMapProps) {
         <div style="font-size: 12px;">
           <strong>${vessel.name || `MMSI ${vessel.mmsi}`}</strong><br/>
           MMSI: ${vessel.mmsi}<br/>
+          Category: ${vessel.category || 'Unknown'}<br/>
           Status: ${NAV_STATUS_LABEL[vessel.navStatus] || 'Unknown'}<br/>
           Speed: ${vessel.sog.toFixed(1)} knots<br/>
           Heading: ${vessel.heading}°<br/>
