@@ -25,12 +25,20 @@ export interface DisruptionPost {
 
 const AISSTREAM_WS = 'wss://stream.aisstream.io/v0/stream';
 
-// Bounding boxes [MinLat, MinLon, MaxLat, MaxLon] for key energy shipping lanes
-const ENERGY_BOXES: [[number, number], [number, number]][] = [
-  [[21.0, 55.0], [27.0, 61.0]],   // Persian Gulf & Strait of Hormuz
-  [[11.0, 32.0], [30.0, 43.5]],   // Red Sea & Bab-el-Mandeb
-  [[29.0, 32.0], [32.0, 33.5]],   // Suez Canal
-  [[1.0,  99.0], [6.0,  104.5]],  // Strait of Malacca
+// Bounding boxes [[MinLat, MinLon], [MaxLat, MaxLon]] for major shipping lanes.
+// Bounded (not worldwide) to stay within the free AISStream tier and keep the map fast.
+const SHIPPING_LANES: [[number, number], [number, number]][] = [
+  // Energy chokepoints
+  [[21.0, 55.0], [27.0, 61.0]],     // Persian Gulf & Strait of Hormuz
+  [[11.0, 32.0], [30.0, 43.5]],     // Red Sea & Bab-el-Mandeb
+  [[29.0, 32.0], [32.0, 33.5]],     // Suez Canal
+  [[1.0,  99.0], [6.0,  104.5]],    // Strait of Malacca
+  // Additional major lanes
+  [[49.5, -1.5], [51.5, 2.5]],      // English Channel & Dover Strait
+  [[35.7, -6.3], [36.3, -5.0]],     // Strait of Gibraltar
+  [[7.5, -80.6], [9.8, -78.8]],     // Panama Canal approaches
+  [[1.0, 103.4], [1.6, 104.2]],     // Singapore Strait
+  [[40.8, 28.8], [41.4, 29.3]],     // Bosphorus Strait
 ];
 
 const NAV_STATUS_LABEL: Record<number, string> = {
@@ -46,6 +54,28 @@ const NAV_STATUS_LABEL: Record<number, string> = {
   15: 'Unknown',
 };
 
+// All ship-type categories we report on (used to seed counters so every
+// category appears in the 10-minute log even when its count is zero).
+const SHIP_CATEGORIES = [
+  'Tanker', 'Cargo', 'Passenger', 'Fishing', 'Tug/Towing',
+  'High-Speed Craft', 'Pleasure/Sailing', 'Service', 'Special', 'Other', 'Unknown',
+] as const;
+
+// Map an AIS ShipAndCargoType code (0–99) to a human-readable category.
+function shipCategory(type: number): string {
+  if (type >= 80 && type <= 89) return 'Tanker';
+  if (type >= 70 && type <= 79) return 'Cargo';
+  if (type >= 60 && type <= 69) return 'Passenger';
+  if (type === 30) return 'Fishing';
+  if (type === 31 || type === 32 || type === 52) return 'Tug/Towing';
+  if (type >= 40 && type <= 49) return 'High-Speed Craft';
+  if (type === 36 || type === 37) return 'Pleasure/Sailing';
+  if (type >= 50 && type <= 59) return 'Service';
+  if (type >= 33 && type <= 35) return 'Special';
+  if (type >= 1 && type <= 99) return 'Other';
+  return 'Unknown';
+}
+
 interface AISVessel {
   mmsi: number;
   name: string;
@@ -55,6 +85,35 @@ interface AISVessel {
   sog: number;
   time: string;
   heading: number;
+  shipType: number;   // raw AIS ShipAndCargoType code (0–99)
+  category: string;   // human-readable category (see shipCategory)
+}
+
+// Persistent MMSI → ship-type registry. ShipStaticData messages are infrequent
+// (~every 6 min), so a single collection window catches type for only some
+// vessels. Accumulating across hourly refreshes steadily improves coverage.
+const _shipTypeRegistry = new Map<number, number>();
+
+// Count vessels per category, seeded with every known category at zero.
+function categoryCounts(vessels: AISVessel[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const c of SHIP_CATEGORIES) counts[c] = 0;
+  for (const v of vessels) counts[v.category] = (counts[v.category] ?? 0) + 1;
+  return counts;
+}
+
+function logCategoryBreakdown(vessels: AISVessel[], label: string): void {
+  if (vessels.length === 0) {
+    console.log(`[maritime] ${label}: no vessels on map`);
+    return;
+  }
+  const counts = categoryCounts(vessels);
+  const summary = Object.entries(counts)
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([cat, n]) => `${cat}=${n}`)
+    .join('  ');
+  console.log(`[maritime] ${label} — ${vessels.length} vessels: ${summary}`);
 }
 
 function regionLabel(lat: number, lon: number): string {
@@ -64,6 +123,11 @@ function regionLabel(lat: number, lon: number): string {
   if (lat >= 29.0 && lat <= 32.0 && lon >= 32.0 && lon <= 33.5) return 'Suez Canal';
   if (lat >= 11.0 && lat <= 30.0 && lon >= 32.0 && lon <= 43.5) return 'Red Sea';
   if (lat >= 1.0  && lat <= 6.0  && lon >= 99.0 && lon <= 104.5) return 'Strait of Malacca';
+  if (lat >= 49.5 && lat <= 51.5 && lon >= -1.5 && lon <= 2.5)   return 'English Channel';
+  if (lat >= 35.7 && lat <= 36.3 && lon >= -6.3 && lon <= -5.0)  return 'Strait of Gibraltar';
+  if (lat >= 7.5  && lat <= 9.8  && lon >= -80.6 && lon <= -78.8) return 'Panama Canal';
+  if (lat >= 1.0  && lat <= 1.6  && lon >= 103.4 && lon <= 104.2) return 'Singapore Strait';
+  if (lat >= 40.8 && lat <= 41.4 && lon >= 28.8 && lon <= 29.3)  return 'Bosphorus Strait';
   return 'Unknown Region';
 }
 
@@ -150,8 +214,16 @@ async function _fetchRawVessels(): Promise<AISVessel[]> {
       if (settled) return;
       settled = true;
       ws.terminate();
-      console.log(`[AISStream-Vessels] Done — ${vessels.size} vessels collected`);
-      resolve([...vessels.values()]);
+      // Resolve each vessel's category from the latest type seen this window,
+      // falling back to the persistent registry (types rarely change).
+      for (const v of vessels.values()) {
+        const type = _shipTypeRegistry.get(v.mmsi) ?? 0;
+        v.shipType = type;
+        v.category = shipCategory(type);
+      }
+      const list = [...vessels.values()];
+      logCategoryBreakdown(list, 'Collected');
+      resolve(list);
     };
 
     const ws = new WS(AISSTREAM_WS);
@@ -161,19 +233,28 @@ async function _fetchRawVessels(): Promise<AISVessel[]> {
       console.log('[AISStream-Vessels] Connected');
       ws.send(JSON.stringify({
         APIKey: apiKey,
-        BoundingBoxes: ENERGY_BOXES,
-        FilterMessageTypes: ['PositionReport'],
+        BoundingBoxes: SHIPPING_LANES,
+        // PositionReport gives location/status; ShipStaticData gives ship type.
+        FilterMessageTypes: ['PositionReport', 'ShipStaticData'],
       }));
     });
 
     ws.on('message', (data: WS.RawData) => {
       try {
         const msg = JSON.parse(data.toString());
-        if (msg.MessageType !== 'PositionReport') return;
-
         const meta = msg.MetaData;
+        if (!meta) return;
+
+        // Ship type comes from static-data messages — record it persistently.
+        if (msg.MessageType === 'ShipStaticData') {
+          const type = msg.Message?.ShipStaticData?.Type;
+          if (typeof type === 'number') _shipTypeRegistry.set(meta.MMSI, type);
+          return;
+        }
+
+        if (msg.MessageType !== 'PositionReport') return;
         const report = msg.Message?.PositionReport;
-        if (!meta || !report) return;
+        if (!report) return;
 
         const navStatus: number = report.NavigationalStatus ?? 15;
         const heading: number = report.Heading ?? report.CourseOverGround ?? 0;
@@ -187,6 +268,8 @@ async function _fetchRawVessels(): Promise<AISVessel[]> {
           sog: report.Sog ?? 0,
           time: parseAISTime(meta.time_utc ?? ''),
           heading,
+          shipType: 0,        // resolved in finish() from _shipTypeRegistry
+          category: 'Unknown',
         });
       } catch { /* ignore malformed messages */ }
     });
@@ -463,4 +546,21 @@ export async function fetchAllDisruptions(): Promise<DisruptionsResult> {
 export async function getVesselsFromCache(): Promise<AISVessel[]> {
   const { vessels } = await getCache();
   return vessels;
+}
+
+// --- 10-minute category report ------------------------------------------------
+// Logs how many ships of each category are currently on the map (i.e. in the
+// shared cache). Reads the cache passively — it never triggers a new AISStream
+// connection. A global guard prevents duplicate timers across hot reloads.
+declare global {
+  // eslint-disable-next-line no-var
+  var __maritimeCategoryLogger: ReturnType<typeof setInterval> | undefined;
+}
+
+if (!globalThis.__maritimeCategoryLogger) {
+  globalThis.__maritimeCategoryLogger = setInterval(() => {
+    logCategoryBreakdown(_cache?.vessels ?? [], '10-min report (on map)');
+  }, 10 * 60 * 1000);
+  // Don't keep the process alive just for this timer.
+  globalThis.__maritimeCategoryLogger.unref?.();
 }
