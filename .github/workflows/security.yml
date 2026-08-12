@@ -39,15 +39,15 @@ jobs:
       - name: Run npm audit (informational)
         run: npm audit --audit-level=high || true
 
-      - name: Check for vulnerabilities (fail on critical)
+      - name: Check for vulnerabilities (fail on high or critical)
         run: |
-          npm audit --audit-level=critical > /dev/null 2>&1
+          npm audit --audit-level=high > /dev/null 2>&1
           if [ $? -ne 0 ]; then
-            echo "❌ CRITICAL vulnerabilities detected"
+            echo "❌ HIGH or CRITICAL vulnerabilities detected"
             npm audit
             exit 1
           fi
-          echo "✅ No critical vulnerabilities found"
+          echo "✅ No high or critical vulnerabilities found"
 
   snyk-scan:
     name: Snyk Security Scan
@@ -185,5 +185,5 @@ jobs:
       - name: Fail if npm audit failed
         if: ${{ needs.npm-audit.result == 'failure' }}
         run: |
-          echo "⚠️ npm audit found CRITICAL vulnerabilities — deployment will be blocked"
+          echo "⚠️ npm audit found HIGH or CRITICAL vulnerabilities — deployment will be blocked"
           exit 1
