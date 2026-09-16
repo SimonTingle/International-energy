@@ -1,0 +1,44 @@
+# npm audit report
+
+baseline-browser-mapping  >=2.0.0 <2.11.0
+Severity: moderate
+baseline-browser-mapping process termination on invalid input causes denial of service - https://github.com/advisories/GHSA-w5vr-8v7q-w6rv
+fix available via `npm audit fix`
+node_modules/baseline-browser-mapping
+
+browserslist  <=4.28.6
+Severity: high
+Browserslist: Unbounded memory growth (no cache eviction) via distinct query results, leading to eventual OOM - https://github.com/advisories/GHSA-c83g-rgw3-j3cx
+Browserslist: Uncaught crash / prototype write via untrusted browserslist-stats.json custom stats (normalizeStats) - https://github.com/advisories/GHSA-73wf-gq98-2v4g
+fix available via `npm audit fix`
+node_modules/browserslist
+
+js-yaml  4.0.0 - 4.3.1
+Severity: high
+js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources - https://github.com/advisories/GHSA-2883-xcg3-v3hh
+fix available via `npm audit fix`
+node_modules/js-yaml
+
+next  9.5.6-canary.0 - 15.5.23 || 15.6.0-canary.0 - 16.3.0-preview.10
+Severity: critical
+Next.js: Unauthenticated Remote Code Execution on windows-hosted servers - https://github.com/advisories/GHSA-p293-qw3h-jr36
+Next.js: Unauthenticated Remote Code Execution in Image Optimization API when AVIF files are used - https://github.com/advisories/GHSA-2xp9-vwfh-vxw4
+Depends on vulnerable versions of sharp
+fix available via `npm audit fix`
+node_modules/next
+
+postcss-selector-parser  6.1.0 - 6.1.2
+postcss-selector-parser allows denial of service through uncontrolled AST recursion - https://github.com/advisories/GHSA-w9m9-85wc-3x92
+fix available via `npm audit fix`
+node_modules/postcss-selector-parser
+
+sharp  <0.35.4
+Severity: high
+sharp: Vulnerabilities in libheif: GHSA-g89c-p67h-r497 and GHSA-2jg2-4ch7-h545 - https://github.com/advisories/GHSA-rgj7-g3m4-5g8c
+fix available via `npm audit fix`
+node_modules/sharp
+
+6 vulnerabilities (1 low, 1 moderate, 3 high, 1 critical)
+
+To address all issues, run:
+  npm audit fix
