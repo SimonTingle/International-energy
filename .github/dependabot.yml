@@ -35,10 +35,6 @@ updates:
     # Allow certain version updates (e.g., major for critical security fixes)
     allow:
       - dependency-type: 'all'
-    # Ignore certain packages if needed
-    ignore:
-      # - dependency-name: 'next'
-      #   versions: ['>=16']
 
   # GitHub Actions updates
   - package-ecosystem: 'github-actions'
