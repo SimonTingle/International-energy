@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.0",
-    "axios": "^1.6.0",
+    "axios": "^1.20.0",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.0",
     "dotenv": "^16.0.0",
